@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portofolio — Rama Hadi Nugraha</title>
+<meta name="description" content="Portofolio Rama Hadi Nugraha: UI/UX & Mobile Developer, Visual Designer, Applied AI Research.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%232e6fd8'/><rect x='3' y='4' width='10' height='8' fill='%23fff8e7'/></svg>">
+<style>
+  .pf-wrap { max-width: 980px; margin: 0 auto; padding: 22px 16px 40px; }
+  .pf-hero {
+    background: linear-gradient(135deg, #fdf6e0, #e8f3ff);
+    border: 3px solid #000; border-radius: 16px; box-shadow: 0 6px 0 rgba(0,0,0,.5);
+    padding: 30px 28px; text-align: center;
+  }
+  .pf-hero .avatar {
+    width: 92px; height: 92px; margin: 0 auto 12px; border-radius: 50%;
+    background: #bfe3ff; border: 3px solid #000;
+    display: flex; align-items: center; justify-content: center; font-size: 48px;
+  }
+  .pf-hero h1 { font-size: clamp(24px, 5vw, 36px); margin-bottom: 6px; }
+  .pf-hero .role { color: #2e6fd8; font-weight: 800; font-size: clamp(14px, 3vw, 17px); }
+  .pf-hero .desc { margin: 12px auto 18px; max-width: 640px; line-height: 1.6; font-size: 15px; color: #333; }
+  .pf-cta { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .pf-cta a { text-decoration: none; color: inherit; }
+  .pf-section {
+    background: var(--paper); border: 3px solid #000; border-radius: 14px;
+    box-shadow: 0 5px 0 rgba(0,0,0,.45); padding: 22px 24px; margin-top: 20px;
+  }
+  .pf-section h2 { font-size: 20px; margin-bottom: 12px; }
+  .pf-section p, .pf-section li { font-size: 15px; line-height: 1.6; }
+  .pf-section li { margin-left: 20px; margin-bottom: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
+  .skill-chip {
+    background: #fff; border: 2px solid #000; border-radius: 999px;
+    padding: 4px 13px; font-size: 13.5px; font-weight: 700; box-shadow: 0 2px 0 #000;
+  }
+  .back-bar { max-width: 980px; margin: 0 auto; padding: 16px 16px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+  .back-bar a { text-decoration: none; color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="px-btn" href="index.html">🏡 Kembali ke Desa</a>
+  <a class="px-btn" href="fishing.html">🎣 Mancing</a>
+  <a class="px-btn" href="td.html">🏰 Tower Defense</a>
+</div>
+
+<main class="pf-wrap">
+  <section class="pf-hero">
+    <div class="avatar">🧑‍💻</div>
+    <h1>Rama Hadi Nugraha</h1>
+    <div class="role">UI/UX &amp; Mobile Developer · Visual Designer · Applied AI Research</div>
+    <p class="desc">Lulusan S1 Teknik Informatika, Universitas Komputer Indonesia (2022–2026) dengan IPK 3,80. Berpengalaman membangun aplikasi Flutter end-to-end, merancang pengalaman pengguna, membuat konten visual untuk banyak akun, dan meneliti computer vision hingga tingkat internasional.</p>
+    <div class="pf-cta">
+      <a class="px-btn primary" href="mailto:nramahadi1@gmail.com">✉️ Hubungi Saya</a>
+      <a class="px-btn" href="https://www.linkedin.com/in/rama-hadi-nugraha" target="_blank" rel="noopener">💼 LinkedIn</a>
+      <a class="px-btn" href="https://github.com/Ram4UnMi" target="_blank" rel="noopener">🐙 GitHub</a>
+      <a class="px-btn" href="index.html">🎮 Main ke Desa Portofolio</a>
+    </div>
+  </section>
+
+  <section class="pf-section">
+    <h2>🚀 Proyek</h2>
+    <div class="cards">
+      <article class="card">
+        <h4>Aplikasi Tiket Wisata — Disparbud Majalengka</h4>
+        <p>UI/UX end-to-end dan pengembangan Flutter (web &amp; Android) untuk aplikasi pemesanan tiket wisata; diuji 200+ pengguna, fitur scan QR Flutter mempercepat validasi tiket 40%. Sekaligus merancang logo &amp; branding.</p>
+        <p class="tags">Flutter · UI/UX · Figma</p>
+      </article>
+      <article class="card">
+        <h4>Japanese Waste Detection — Riset JAIST</h4>
+        <p>Deteksi objek sampah dengan YOLOv8 dan backend FastAPI (REST API, SQLite/SQLAlchemy). Di JAIST: eksperimen 8 konfigurasi deteksi objek, pipeline PCA/UMAP/Isolation Forest, analisis LMM/GEE &amp; Association Rule Mining atas 1.150 prediksi.</p>
+        <p class="tags">YOLOv8 · FastAPI · Python · Riset AI</p>
+      </article>
+      <article class="card">
+        <h4>Blockchain B2B Product Reservation DApp</h4>
+        <p>Aplikasi terdesentralisasi reservasi produk B2B: smart contract Solidity di Ethereum Sepolia, frontend React + MetaMask.</p>
+        <p class="tags">Solidity · Ethereum · React · Web3</p>
+      </article>
+      <article class="card">
+        <h4>TaniXplore — Platform Pertanian</h4>
+        <p>Platform eksplorasi pertanian terintegrasi Maps API (2024).</p>
+        <p class="tags">Maps API · Web</p>
+      </article>
+      <article class="card">
+        <h4>Desain Konten — Laznas PYI</h4>
+        <p>Visual Designer: konten untuk 8 akun Instagram (insight 65/22/12), rata-rata +20 pengikut per akun per bulan.</p>
+        <p class="tags">Photoshop · Illustrator · Desain Visual</p>
+      </article>
+      <article class="card">
+        <h4>Proyek Lainnya</h4>
+        <p>Smart Door Notification berbasis IoT (2025) dan Anime Face Recognition (2025).</p>
+        <p class="tags">IoT · Computer Vision</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="pf-section">
+    <h2>💼 Pengalaman</h2>
+    <ul>
+      <li><b>Research Intern — JAIST</b> (Jul–Sep 2026): Computer Vision &amp; Reliability Analysis.</li>
+      <li><b>Visual Designer — Laznas PYI</b> (Feb–Mar 2026).</li>
+      <li><b>UI/UX &amp; Flutter Developer Intern — Dinas Pariwisata dan Kebudayaan Majalengka</b> (Agu–Okt 2025).</li>
+      <li><b>Divisi Dekomedia — UKM Fotografi Glosarium UNIKOM</b> (Des 2023–Des 2024): konten visual &amp; dokumentasi acara kampus, engagement +25%.</li>
+    </ul>
+  </section>
+
+  <section class="pf-section">
+    <h2>🛠️ Keahlian</h2>
+    <p><b>Pemrograman &amp; Framework</b></p>
+    <div class="chips">
+      <span class="skill-chip">Flutter</span><span class="skill-chip">Python / FastAPI</span><span class="skill-chip">PHP</span><span class="skill-chip">JavaScript</span><span class="skill-chip">HTML/CSS</span><span class="skill-chip">C# / Unity</span><span class="skill-chip">Solidity</span>
+    </div>
+    <p style="margin-top:12px"><b>Data &amp; AI</b></p>
+    <div class="chips">
+      <span class="skill-chip">YOLOv8</span><span class="skill-chip">SQLite</span><span class="skill-chip">SQLAlchemy</span><span class="skill-chip">Hadoop</span><span class="skill-chip">PCA / UMAP</span><span class="skill-chip">Isolation Forest</span><span class="skill-chip">LMM / GEE</span><span class="skill-chip">Vuforia AR</span>
+    </div>
+    <p style="margin-top:12px"><b>Desain</b></p>
+    <div class="chips">
+      <span class="skill-chip">Figma</span><span class="skill-chip">Photoshop</span><span class="skill-chip">Illustrator</span><span class="skill-chip">Premiere Pro</span><span class="skill-chip">After Effects</span><span class="skill-chip">Lightroom</span>
+    </div>
+  </section>
+
+  <section class="pf-section">
+    <h2>🎓 Pendidikan &amp; Sertifikasi</h2>
+    <ul>
+      <li><b>S1 Teknik Informatika</b> — Universitas Komputer Indonesia (2022–2026), IPK 3,80.</li>
+      <li><b>BNSP Data Analis</b> — LSP Informatika.</li>
+      <li><b>BNSP Desain Grafis Muda</b> — LKP DITEKINDO &amp; DISPORA Jawa Barat.</li>
+    </ul>
+  </section>
+
+  <section class="pf-section">
+    <h2>✉️ Kontak</h2>
+    <p>
+      Email: <a href="mailto:nramahadi1@gmail.com">nramahadi1@gmail.com</a><br>
+      LinkedIn: <a href="https://www.linkedin.com/in/rama-hadi-nugraha" target="_blank" rel="noopener">linkedin.com/in/rama-hadi-nugraha</a><br>
+      GitHub: <a href="https://github.com/Ram4UnMi" target="_blank" rel="noopener">github.com/Ram4UnMi</a>
+    </p>
+    <p style="margin-top:8px">Terbuka untuk peluang UI/UX, Mobile Development (Flutter), dan Desain Visual.</p>
+  </section>
+</main>
+
+<footer>
+  <p>© 2026 Rama Hadi Nugraha — Versi teks dari Desa Portofolio.</p>
+</footer>
+
+</body>
+</html>

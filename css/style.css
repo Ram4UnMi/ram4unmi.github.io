@@ -1,0 +1,450 @@
+/* ===== Desa Portofolio — gaya pixel game 2D, responsif ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #20242b;
+  --paper: #fff8e7;
+  --accent: #e4572e;
+  --green: #38a13d;
+  --blue: #2e6fd8;
+  --gold: #f2b705;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: "Trebuchet MS", "Segoe UI", Verdana, sans-serif;
+  background: #1d2b1f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Crect width='32' height='32' fill='%231d2b1f'/%3E%3Crect y='16' width='16' height='16' fill='%23213426'/%3E%3Crect x='16' width='16' height='16' fill='%23213426'/%3E%3C/svg%3E");
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ===== Top bar ===== */
+.topbar {
+  text-align: center;
+  padding: 18px 12px 6px;
+  color: #fff;
+}
+.logo {
+  font-size: clamp(22px, 5vw, 38px);
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000;
+}
+.topbar-sub { color: #ffe9a8; font-size: clamp(12px, 2.5vw, 15px); margin-top: 4px; }
+
+main { max-width: 920px; margin: 0 auto; padding: 10px 12px 30px; }
+
+/* ===== HUD ===== */
+#hud {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  background: var(--paper);
+  border: 3px solid #000;
+  box-shadow: 0 4px 0 #000;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.hud-item { white-space: nowrap; }
+.hud-btn {
+  margin-left: auto; background: #fff; border: 2px solid #000; border-radius: 8px;
+  font-size: 16px; padding: 2px 10px; cursor: pointer;
+}
+
+/* ===== Stage & canvas ===== */
+#stage {
+  position: relative;
+  border: 4px solid #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 0 rgba(0,0,0,.55);
+  background: #57a639;
+  touch-action: none;
+}
+#game {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#controls-help {
+  display: flex; flex-wrap: wrap; gap: 6px 18px;
+  color: #e8f5e9; font-size: 13px; margin-top: 10px; justify-content: center;
+}
+#quest-hint { text-align: center; color: #ffe9a8; font-size: 14px; margin-top: 6px; }
+
+/* ===== Dialog ===== */
+#dialog {
+  position: absolute; left: 10px; right: 10px; bottom: 10px;
+  display: flex; gap: 10px; align-items: flex-start;
+  background: var(--paper);
+  border: 3px solid #000; border-radius: 10px;
+  box-shadow: 0 4px 0 rgba(0,0,0,.5);
+  padding: 10px 12px;
+  z-index: 5;
+  cursor: pointer;
+}
+#dialog.hidden { display: none; }
+#dialog-face {
+  width: 56px; height: 56px; flex: 0 0 auto;
+  image-rendering: pixelated;
+  background: #bfe3ff; border: 2px solid #000; border-radius: 6px;
+}
+#dialog-name { font-weight: 900; color: var(--accent); margin-bottom: 3px; font-size: 15px; }
+#dialog-text { font-size: 15px; line-height: 1.45; min-height: 42px; white-space: pre-wrap; }
+#dialog-next { font-size: 11px; color: #777; margin-top: 4px; animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+
+/* ===== Touch controls ===== */
+#touch-controls {
+  position: absolute; inset: auto 0 0 0;
+  display: none;
+  justify-content: space-between; align-items: flex-end;
+  padding: 0 12px 86px;
+  pointer-events: none;
+  z-index: 4;
+}
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 46px);
+  grid-template-rows: repeat(3, 46px);
+  gap: 4px;
+  pointer-events: auto;
+}
+#t-up { grid-area: 1 / 2; } #t-left { grid-area: 2 / 1; }
+#t-down { grid-area: 3 / 2; } #t-right { grid-area: 2 / 3; }
+.tbtn {
+  background: rgba(255, 248, 231, .88);
+  border: 3px solid #000; border-radius: 10px;
+  font-size: 17px; font-weight: 900; color: var(--ink);
+  box-shadow: 0 3px 0 #000;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.tbtn:active { transform: translateY(2px); box-shadow: 0 1px 0 #000; }
+.tbtn.action {
+  pointer-events: auto;
+  width: 84px; height: 84px; border-radius: 50%;
+  background: var(--gold); font-size: 14px;
+}
+/* Tampilkan D-pad di layar sentuh / layar kecil */
+@media (pointer: coarse), (max-width: 700px) {
+  #touch-controls { display: flex; }
+  #controls-help { display: none; }
+}
+
+/* ===== Modal mini game ===== */
+.modal {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(10, 15, 10, .72);
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px;
+}
+.modal.hidden { display: none; }
+.modal-box {
+  background: var(--paper);
+  border: 4px solid #000; border-radius: 12px;
+  box-shadow: 0 8px 0 #000;
+  width: 100%; max-width: 560px;
+  padding: 12px;
+}
+.modal-head {
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 900; font-size: 17px; margin-bottom: 8px;
+}
+.modal-close {
+  background: #e4572e; color: #fff; border: 2px solid #000; border-radius: 8px;
+  width: 34px; height: 34px; font-size: 15px; cursor: pointer;
+}
+.modal-box canvas {
+  display: block; width: 100%; height: auto;
+  border: 3px solid #000; border-radius: 8px;
+  image-rendering: pixelated; background: #7ec8f7;
+}
+.modal-bar {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  margin-top: 10px; font-size: 14px;
+}
+.modal-bar span { flex: 1 1 auto; }
+.td-stats span { flex: 0 0 auto; }
+.td-stats #td-msg { flex: 1 1 100%; color: #555; font-size: 13px; }
+.px-btn {
+  background: #fff; border: 3px solid #000; border-radius: 8px;
+  box-shadow: 0 3px 0 #000; padding: 8px 14px;
+  font-weight: 900; font-size: 14px; cursor: pointer; font-family: inherit;
+}
+.px-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #000; }
+.px-btn.primary { background: var(--green); color: #fff; }
+.px-btn.selected { background: var(--gold); }
+.collection { margin-top: 8px; font-size: 13px; color: #444; min-height: 18px; }
+
+/* ===== Versi teks ===== */
+#text-version {
+  background: var(--paper);
+  border: 3px solid #000; border-radius: 12px;
+  box-shadow: 0 6px 0 rgba(0,0,0,.5);
+  margin-top: 26px; padding: 20px 22px 24px;
+}
+#text-version h2 { font-size: clamp(18px, 4vw, 24px); margin-bottom: 8px; }
+#text-version h3 { margin: 18px 0 8px; font-size: 17px; }
+.tv-intro, .plain { line-height: 1.55; font-size: 15px; }
+.plain li { margin-left: 20px; margin-bottom: 5px; line-height: 1.5; font-size: 15px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.card {
+  background: #fff; border: 2px solid #000; border-radius: 10px; padding: 12px 14px;
+  box-shadow: 0 3px 0 #000;
+}
+.card h4 { margin-bottom: 6px; font-size: 15px; }
+.card p { font-size: 14px; line-height: 1.5; }
+.card .tags { margin-top: 8px; color: var(--blue); font-weight: 700; font-size: 12.5px; }
+a { color: var(--blue); }
+
+footer { text-align: center; color: #cfe8cf; font-size: 13px; padding: 0 12px 24px; }
+
+/* ===== Halaman mini game (fishing.html & td.html) ===== */
+.game-page {
+  background: var(--paper);
+  border: 3px solid #000; border-radius: 12px;
+  box-shadow: 0 6px 0 rgba(0,0,0,.5);
+  padding: 16px;
+}
+.page-head {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  justify-content: space-between; margin-bottom: 12px;
+}
+.px-btn.back { text-decoration: none; color: var(--ink); display: inline-block; }
+.page-score { font-size: 15px; }
+.canvas-frame {
+  border: 4px solid #000; border-radius: 10px; overflow: hidden;
+  box-shadow: 0 5px 0 rgba(0,0,0,.45); background: #7ec8f7;
+}
+.canvas-frame canvas {
+  display: block; width: 100%; height: auto;
+  image-rendering: pixelated; image-rendering: crisp-edges;
+}
+.page-bar {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  margin-top: 12px; font-size: 15px;
+}
+.page-bar span { flex: 1 1 220px; }
+.px-btn.big { font-size: 16px; padding: 12px 20px; }
+.px-btn small { display: block; font-weight: 400; font-size: 11.5px; color: #555; }
+.page-help { margin-top: 10px; font-size: 13.5px; color: #555; }
+.wood-panel {
+  margin-top: 16px;
+  background: linear-gradient(#a9743f, #96682f);
+  border: 3px solid #5d4020; border-radius: 10px;
+  color: #fff7e0; padding: 12px 16px;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.25);
+}
+.wood-panel h3 { margin-bottom: 6px; font-size: 16px; }
+.collection.big { color: #fff7e0; font-size: 15px; }
+.td-stats-bar {
+  display: flex; flex-wrap: wrap; gap: 8px 22px;
+  background: #fff; border: 2.5px solid #000; border-radius: 8px;
+  padding: 8px 14px; font-size: 15.5px; margin-bottom: 8px;
+}
+.td-msg { font-size: 14px; color: #444; margin-bottom: 10px; min-height: 20px; }
+
+/* ===== MODE FULLSCREEN 3D (index.html) ===== */
+body.game-full {
+  margin: 0; overflow: hidden; height: 100vh; height: 100dvh;
+  background: #79b5e0;
+  font-family: "Trebuchet MS", "Segoe UI", Verdana, sans-serif;
+}
+#scene { position: fixed; inset: 0; touch-action: none; }
+#scene canvas { display: block; }
+
+/* Navbar kaca di atas layar */
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px;
+  background: rgba(18, 28, 20, .72);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(255, 255, 255, .18);
+  color: #fff;
+}
+.nav-brand {
+  font-weight: 900; letter-spacing: 1px; font-size: clamp(14px, 2.6vw, 19px);
+  white-space: nowrap; text-shadow: 2px 2px 0 rgba(0,0,0,.5);
+}
+.nav-chips { display: flex; gap: 6px; flex-wrap: nowrap; }
+.chip {
+  background: rgba(255, 248, 231, .94); color: var(--ink);
+  border: 2px solid #000; border-radius: 999px;
+  padding: 3px 11px; font-size: 13.5px; white-space: nowrap;
+  box-shadow: 0 2px 0 #000;
+}
+.nav-links {
+  margin-left: auto; display: flex; gap: 6px; align-items: center;
+  overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+}
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-btn {
+  background: rgba(255,255,255,.12); color: #fff;
+  border: 1.5px solid rgba(255,255,255,.35); border-radius: 999px;
+  padding: 6px 12px; font-size: 13.5px; font-weight: 700;
+  cursor: pointer; white-space: nowrap; font-family: inherit;
+  text-decoration: none; display: inline-block;
+}
+.nav-btn:hover { background: rgba(255,255,255,.28); }
+
+/* Petunjuk interaksi */
+#prompt {
+  position: fixed; left: 50%; bottom: 128px; transform: translateX(-50%);
+  z-index: 15; background: rgba(0,0,0,.72); color: #fff;
+  padding: 8px 18px; border-radius: 999px; font-size: 14.5px;
+  border: 2px solid rgba(255,255,255,.35);
+  animation: promptFloat 1.6s ease-in-out infinite;
+  white-space: nowrap; max-width: 92vw; text-align: center;
+}
+#prompt.hidden { display: none; }
+@keyframes promptFloat { 50% { transform: translateX(-50%) translateY(-5px); } }
+
+/* Dialog fullscreen */
+body.game-full #dialog {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: 14px; width: min(680px, calc(100vw - 20px));
+  z-index: 18;
+}
+#dialog-avatar {
+  width: 56px; height: 56px; flex: 0 0 auto;
+  background: #bfe3ff; border: 2px solid #000; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+}
+
+/* Kontrol sentuh fullscreen */
+body.game-full #touch-controls {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 16;
+  padding: 0 14px 108px;
+}
+
+/* Overlay modal (info & tutorial) */
+.overlay {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(8, 14, 10, .66);
+  display: flex; align-items: center; justify-content: center;
+  padding: 14px;
+}
+.overlay.hidden { display: none; }
+.modal-card {
+  background: var(--paper);
+  border: 3.5px solid #000; border-radius: 14px;
+  box-shadow: 0 8px 0 #000;
+  width: 100%; max-width: 560px; max-height: 86vh; overflow-y: auto;
+  padding: 20px 22px; position: relative;
+}
+.modal-card h2 { font-size: 21px; margin-bottom: 10px; padding-right: 34px; }
+.modal-card h3 { margin: 13px 0 5px; font-size: 16px; }
+.modal-card p, .modal-card li { font-size: 14.5px; line-height: 1.55; }
+.modal-card li { margin-left: 19px; margin-bottom: 3px; }
+.modal-x {
+  position: absolute; top: 10px; right: 10px;
+  background: #e4572e; color: #fff; border: 2px solid #000; border-radius: 8px;
+  width: 32px; height: 32px; font-size: 14px; cursor: pointer;
+}
+.modal-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+#info-body .proj-item { margin-bottom: 11px; }
+#info-body .proj-item b { display: block; font-size: 15px; }
+#info-body .proj-item span { color: #555; font-size: 13.5px; }
+.tutorial-note { margin-top: 12px; background: #fff; border: 2px dashed #999; border-radius: 8px; padding: 8px 12px; }
+
+/* Toast */
+#toast {
+  position: fixed; top: 74px; left: 50%; transform: translateX(-50%);
+  z-index: 30; background: #20242b; color: #ffd93d;
+  border: 2.5px solid #ffd93d; border-radius: 999px;
+  padding: 9px 22px; font-weight: 900; font-size: 16px;
+  box-shadow: 0 5px 0 rgba(0,0,0,.5);
+  animation: toastIn .3s ease-out;
+  white-space: nowrap; max-width: 92vw;
+}
+#toast.hidden { display: none; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-12px); } }
+
+/* Loading */
+#loading {
+  position: fixed; inset: 0; z-index: 60;
+  background: linear-gradient(#6ec1f5, #a8d8a8);
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+#loading.hidden { display: none; }
+.loading-box {
+  background: var(--paper); border: 3.5px solid #000; border-radius: 14px;
+  box-shadow: 0 8px 0 #000; padding: 24px 26px; text-align: center; max-width: 480px;
+}
+.loading-title { font-size: 20px; font-weight: 900; margin-bottom: 8px; }
+.loading-sub { font-size: 14px; color: #555; }
+#loading-error { margin-top: 14px; font-size: 14px; }
+#loading-error .px-btn.link { text-decoration: none; color: var(--ink); display: inline-block; margin: 4px 3px; }
+#loading-error.hidden { display: none; }
+
+/* ===== Modal cerita ===== */
+.overlay.story {
+  background: linear-gradient(180deg, rgba(24,20,38,.93), rgba(43,32,18,.95));
+}
+.story-card {
+  background: linear-gradient(#fdf6e0, #f3e3bb);
+  border: 3.5px solid #000; border-radius: 14px;
+  box-shadow: 0 10px 0 #000;
+  width: 100%; max-width: 540px;
+  padding: 28px 28px 22px; text-align: center;
+}
+#story-emoji { font-size: 62px; line-height: 1.1; }
+.story-card h2 { font-size: 23px; margin: 8px 0 10px; }
+#story-text {
+  font-size: 16px; line-height: 1.65; min-height: 118px;
+  text-align: left; color: #33302a;
+}
+#story-dots { margin: 12px 0 4px; font-size: 13px; letter-spacing: 5px; color: #a08c5a; }
+#story-dots .on { color: #b3392e; }
+.story-actions { justify-content: space-between; }
+
+/* ===== Modal toko ===== */
+.shop-card { max-width: 600px; }
+.shop-sub { font-size: 14.5px; margin-bottom: 12px; }
+.shop-coins {
+  background: #20242b; color: #ffd93d; border-radius: 999px;
+  padding: 2px 12px; font-size: 14px; white-space: nowrap;
+}
+.shop-item {
+  display: flex; gap: 12px; align-items: center;
+  background: #fff; border: 2.5px solid #000; border-radius: 10px;
+  padding: 10px 13px; margin-bottom: 9px;
+  box-shadow: 0 3px 0 rgba(0,0,0,.7);
+}
+.shop-item .ic { font-size: 30px; flex: 0 0 auto; }
+.shop-item .inf { flex: 1 1 auto; }
+.shop-item .inf b { font-size: 15px; display: block; }
+.shop-item .inf span { font-size: 13px; color: #555; line-height: 1.4; display: block; }
+.shop-item .buy { flex: 0 0 auto; text-align: center; }
+.shop-item .price { font-weight: 900; font-size: 14.5px; display: block; margin-bottom: 4px; }
+.shop-item.owned { background: #e6f4e3; }
+.shop-item .owned-label { font-weight: 900; color: #2e7d32; font-size: 14px; }
+.shop-note { font-size: 12.5px; color: #666; margin-top: 6px; }
+
+@media (max-width: 760px) {
+  .nav-brand { display: none; }
+  #prompt { bottom: 196px; }
+  body.game-full #touch-controls { padding-bottom: 170px; }
+}
+
+/* HP portrait (layar panjang ke bawah): dialog warga di TENGAH layar */
+@media (orientation: portrait) {
+  body.game-full #dialog {
+    top: 50%; bottom: auto;
+    transform: translate(-50%, -50%);
+    width: min(94vw, 560px);
+  }
+  #prompt { bottom: auto; top: 62px; }
+}
+
+@media (max-width: 520px) {
+  #dialog-text { font-size: 14px; }
+  #dialog-face { width: 44px; height: 44px; }
+  .hud-item { font-size: 12.5px; }
+}

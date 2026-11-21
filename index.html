@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Desa Portofolio — Rama Hadi Nugraha</title>
+<meta name="description" content="Portofolio interaktif bergaya Stardew Valley: jelajahi desa pixel, ajak bicara warga, main mancing & tower defense.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%2338a13d'/><rect x='3' y='3' width='10' height='7' fill='%23f2c188'/><rect x='3' y='10' width='10' height='3' fill='%232e6fd8'/></svg>">
+<script src="js/storage.js"></script>
+<script src="js/data.js"></script>
+</head>
+<body class="game-full">
+
+<!-- ====== KANVAS GAME FULLSCREEN ====== -->
+<div id="scene"></div>
+
+<!-- ====== NAVBAR / HUD ====== -->
+<header id="navbar">
+  <div class="nav-brand">🏡 DESA PORTOFOLIO</div>
+  <div class="nav-chips">
+    <span class="chip" title="Koin desa — dapatkan dari mengobrol dengan warga & bermain mini game">🪙 <b id="chip-coins">0</b></span>
+    <span class="chip" title="Warga yang sudah diajak bicara">🗺️ <b id="chip-talk">0/8</b></span>
+    <span class="chip" title="Ikan tertangkap">🐟 <b id="chip-fish">0</b></span>
+    <span class="chip" title="Rekor tower defense">🏰 <b id="chip-td">Wave 0</b></span>
+  </div>
+  <nav class="nav-links">
+    <button class="nav-btn" data-section="proyek">🚀 Proyek</button>
+    <button class="nav-btn" data-section="tentang">👋 Tentang</button>
+    <button class="nav-btn" data-section="keahlian">🛠️ Keahlian</button>
+    <button class="nav-btn" data-section="pengalaman">💼 Pengalaman</button>
+    <button class="nav-btn" data-section="kontak">✉️ Kontak</button>
+    <button class="nav-btn" id="btn-shop">🛒 Toko</button>
+    <a class="nav-btn link" href="fishing.html">🎣 Mancing</a>
+    <a class="nav-btn link" href="td.html">🏰 Defense</a>
+    <a class="nav-btn link" href="portofolio.html">📄 Portofolio</a>
+    <button class="nav-btn" id="btn-story" title="Putar ulang cerita">📖</button>
+    <button class="nav-btn" id="btn-tutorial" title="Tutorial">❓</button>
+    <button class="nav-btn" id="btn-music" title="Musik latar on/off">🎵</button>
+    <button class="nav-btn" id="btn-sound" title="Suara on/off">🔊</button>
+  </nav>
+</header>
+
+<!-- ====== PETUNJUK INTERAKSI ====== -->
+<div id="prompt" class="hidden">Tekan <b>E</b> untuk berinteraksi</div>
+
+<!-- ====== KOTAK DIALOG ====== -->
+<div id="dialog" class="hidden">
+  <div id="dialog-avatar">🙂</div>
+  <div id="dialog-main">
+    <div id="dialog-name">???</div>
+    <div id="dialog-text"></div>
+    <div id="dialog-next">▼ Tekan E / Spasi / Tap untuk lanjut</div>
+  </div>
+</div>
+
+<!-- ====== KONTROL SENTUH ====== -->
+<div id="touch-controls">
+  <div class="dpad">
+    <button class="tbtn" id="t-up">▲</button>
+    <button class="tbtn" id="t-left">◀</button>
+    <button class="tbtn" id="t-down">▼</button>
+    <button class="tbtn" id="t-right">▶</button>
+  </div>
+  <button class="tbtn action" id="t-action">BICARA</button>
+</div>
+
+<!-- ====== MODAL INFO SECTION ====== -->
+<div id="info-modal" class="overlay hidden">
+  <div class="modal-card">
+    <button class="modal-x" data-close-info>✖</button>
+    <h2 id="info-title">Judul</h2>
+    <div id="info-body"></div>
+    <div class="modal-actions">
+      <button id="info-visit" class="px-btn primary">📍 Kunjungi di Desa</button>
+      <button class="px-btn" data-close-info>Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL TUTORIAL ====== -->
+<div id="tutorial-modal" class="overlay hidden">
+  <div class="modal-card">
+    <button class="modal-x" data-close-tutorial>✖</button>
+    <h2>🎮 Selamat Datang di Desa Portofolio!</h2>
+    <div class="tutorial-body">
+      <p>Kamu adalah <b>pengunjung desa</b> — karakter berbaju merah. Desa ini adalah portofolio hidup milik <b>Rama Hadi Nugraha</b>: setiap warga menyimpan satu bagian ceritanya!</p>
+      <h3>🕹️ Cara Bermain</h3>
+      <ul>
+        <li><b>Bergerak:</b> WASD / tombol panah (di HP: D-pad di layar).</li>
+        <li><b>Bicara:</b> dekati warga lalu tekan <b>E</b> / Spasi / tombol BICARA. Warga bertanda <b>"!"</b> belum pernah diajak bicara.</li>
+        <li><b>Misi:</b> ajak bicara <b>8 warga</b> untuk membuka seluruh portofolio — setiap warga baru memberimu <b>+15 🪙</b>!</li>
+        <li><b>Navbar di atas</b> berisi koin &amp; progresmu, plus tombol pintas ke Proyek, Tentang, Keahlian, Pengalaman, dan Kontak — bisa baca cepat atau teleport ke warga yang bersangkutan.</li>
+      </ul>
+      <h3>🎣 Mini Game</h3>
+      <ul>
+        <li><b>Mancing:</b> bicara dengan Kakek Tirta di kolam (barat daya) atau klik 🎣 Mancing di navbar.</li>
+        <li><b>Tower Defense:</b> bicara dengan Sersan Garda di arena (timur laut) atau klik 🏰 Defense.</li>
+        <li>Ikan yang tertangkap dan rekor wave-mu tersimpan otomatis, dan menambah koin desa!</li>
+      </ul>
+      <p class="tutorial-note">Buru-buru? Buka <a href="portofolio.html">📄 Portofolio versi teks</a> untuk membaca semuanya tanpa bermain. Game ini 100% offline — tidak butuh internet sama sekali.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="px-btn primary big" data-close-tutorial>MULAI BERMAIN ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL CERITA (story telling) ====== -->
+<div id="story-modal" class="overlay story hidden">
+  <div class="story-card">
+    <div id="story-emoji">📜</div>
+    <h2 id="story-title">Sebuah Surat</h2>
+    <p id="story-text"></p>
+    <div id="story-dots"></div>
+    <div class="modal-actions story-actions">
+      <button id="story-skip" class="px-btn">Lewati ⏭</button>
+      <button id="story-next" class="px-btn primary big">Lanjut ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL TOKO DEKORASI ====== -->
+<div id="shop-modal" class="overlay hidden">
+  <div class="modal-card shop-card">
+    <button class="modal-x" data-close-shop>✖</button>
+    <h2>🛒 Toko Dekorasi Desa</h2>
+    <p class="shop-sub">Katalog Bang Bara — percantik <b>Rumah Tamu</b> tempatmu tinggal selama di desa. Saldo: <span class="shop-coins">🪙 <b id="shop-coins">0</b></span></p>
+    <div id="shop-items"></div>
+    <p class="shop-note">Koin didapat dari mengobrol dengan warga (+15), memancing (poin ikan = koin), dan memenangkan wave tower defense (bonus = koin).</p>
+    <div class="modal-actions">
+      <button class="px-btn" data-close-shop>Tutup</button>
+      <a class="px-btn primary" href="fishing.html" style="text-decoration:none;color:inherit">🎣 Cari Koin: Mancing</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TOAST (notifikasi koin dll) ====== -->
+<div id="toast" class="hidden"></div>
+
+<!-- ====== LOADING / FALLBACK ====== -->
+<div id="loading">
+  <div class="loading-box">
+    <div class="loading-title">🏡 Memuat Desa Portofolio...</div>
+    <div class="loading-sub">Membangun desa pixel untukmu. Sebentar ya!</div>
+    <div id="loading-error" class="hidden">
+      <p>⚠️ Game gagal dimuat di browser ini. Coba browser modern (Chrome/Edge/Firefox versi terbaru), atau buka versi lainnya:</p>
+      <p>
+        <a class="px-btn link" href="portofolio.html">📄 Buka Portofolio Teks</a>
+        <a class="px-btn link" href="fishing.html">🎣 Mancing</a>
+        <a class="px-btn link" href="td.html">🏰 Tower Defense</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tampilkan fallback bila game tidak berhasil jalan dalam 8 detik
+  setTimeout(function () {
+    if (!window.__desaReady) {
+      var err = document.getElementById('loading-error');
+      if (err) err.classList.remove('hidden');
+    }
+  }, 8000);
+</script>
+<script src="js/game2d.js"></script>
+</body>
+</html>

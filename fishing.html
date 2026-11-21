@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kolam Pancing — Desa Portofolio</title>
+<meta name="description" content="Mini game mancing di Desa Portofolio Rama Hadi Nugraha.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%232f7fd0'/><rect x='3' y='6' width='10' height='5' fill='%23ffd93d'/></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">🎣 KOLAM PANCING DESA</div>
+  <div class="topbar-sub">Mini game Desa Portofolio — Rama Hadi Nugraha</div>
+</header>
+
+<main>
+  <section class="game-page">
+    <div class="page-head">
+      <a class="px-btn back" href="index.html">⬅ Kembali ke Desa</a>
+      <span class="page-score">🐟 Total tangkapan: <b id="fish-total">0</b> · ⭐ Poin: <b id="fish-score">0</b></span>
+    </div>
+
+    <div class="canvas-frame">
+      <canvas id="fishing-canvas" width="640" height="400"></canvas>
+    </div>
+
+    <div class="page-bar">
+      <span id="fishing-status">Tekan LEMPAR untuk mulai memancing. Tunggu tanda "!" lalu tarik secepatnya!</span>
+      <button id="fishing-btn" class="px-btn primary big">LEMPAR 🎣</button>
+    </div>
+    <p class="page-help">⌨️ Bisa juga tekan <b>Spasi</b> untuk melempar / menarik. Ikan Koi Emas sangat langka — kesabaran adalah kunci!</p>
+
+    <div class="wood-panel">
+      <h3>🧺 Keranjang Ikan Kamu</h3>
+      <div id="fishing-collection" class="collection big"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2026 Rama Hadi Nugraha — Desa Portofolio. Selamat memancing! 🎣</p>
+</footer>
+
+<script src="js/storage.js"></script>
+<script src="js/fishing.js"></script>
+</body>
+</html>
