@@ -36,6 +36,7 @@
     coins: save0.coins || 0,
     houseUpgrades: new Set(save0.house || []),
     musicOn: save0.music !== false,
+    lang: save0.lang || 'en',
   };
   function persist() {
     if (!window.DesaSave) return;
@@ -46,6 +47,7 @@
     d.coins = STATE.coins;
     d.house = Array.from(STATE.houseUpgrades);
     d.music = STATE.musicOn;
+    d.lang = STATE.lang;
     DesaSave.save(d);
   }
   function refreshChips() {
@@ -55,6 +57,246 @@
     document.getElementById('chip-td').textContent = 'Wave ' + STATE.tdBest;
     document.getElementById('chip-coins').textContent = STATE.coins;
   }
+  /* ---------------- Bahasa (EN utama / ID) ---------------- */
+  const HOUSE_LABEL_EN = {
+    'BALAI DESA': 'VILLAGE HALL', 'PANDAI BESI': 'BLACKSMITH', 'ARENA': 'ARENA',
+    'GALERI': 'GALLERY', 'PENGINAPAN': 'INN', 'KANTOR POS': 'POST OFFICE', 'RUMAH TAMU': 'GUEST HOUSE',
+  };
+  function houseLabel(h) {
+    return STATE.lang === 'en' ? (HOUSE_LABEL_EN[h.label] || h.label) : h.label;
+  }
+
+  /* ---------------- Kamus Bahasa ---------------- */
+  function L(obj) { return obj[STATE.lang] !== undefined ? obj[STATE.lang] : obj.en; }
+  const STR = {
+    prompt: { en: 'Press <b>E</b> / TALK — ', id: 'Tekan <b>E</b> / BICARA — ' },
+    dialogNext: { en: '▼ Press E / Space / Tap to continue', id: '▼ Tekan E / Spasi / Tap untuk lanjut' },
+    homeTitle: { en: 'Guest House — Your Home in the Village', id: 'Rumah Tamu — Rumahmu di Desa' },
+    homePrompt: { en: 'Guest House (your home)', id: 'Rumah Tamu (rumahmu)' },
+    missionDone: { en: '🏆 MISSION COMPLETE! You have met every villager of Portfolio Village!', id: '🏆 MISI SELESAI! Kamu sudah mengenal seluruh warga Desa Portofolio!' },
+    arrived: { en: '📍 You arrived near ', id: '📍 Kamu tiba di dekat ' },
+    coinToast: { en: (n) => '+15 🪙 — Thanks for chatting with ' + n + '!', id: (n) => '+15 🪙 — Terima kasih sudah mengobrol dengan ' + n + '!' },
+    bought: { en: (n) => '🎉 ' + n + ' installed at the Guest House!', id: (n) => '🎉 ' + n + ' terpasang di Rumah Tamu!' },
+    owned: { en: '✓ Owned', id: '✓ Dimiliki' },
+    buy: { en: 'Buy', id: 'Beli' },
+  };
+  const ROLE_EN = {
+    lurah: 'About Me', pandai: 'Skills', dito: 'Project: Tourism Tickets', nara: 'Project: AI Research',
+    raka: 'Project: Blockchain', tania: 'Project: TaniXplore & More', sari: 'Experience', pio: 'Contact',
+    tirta: 'Mini Game: Fishing', garda: 'Mini Game: Tower Defense',
+  };
+  const NPC_EN = {
+    lurah: [
+      'Welcome to Portfolio Village, kid! I am Pak Lurah, the village chief. This village was built by a young man named Rama Hadi Nugraha.',
+      'Rama graduated with a Bachelor\'s degree in Informatics Engineering from Universitas Komputer Indonesia (2022–2026) with a GPA of 3.80. His specialties: UI/UX & Mobile Development, Visual Design, and Applied AI Research.',
+      'He also holds two BNSP certifications: Data Analyst and Junior Graphic Design. Go ahead, walk around — every villager here holds a piece of his work story!',
+    ],
+    pandai: [
+      'Ha, a new visitor! I am Bang Bara, the village blacksmith. In my forge, Rama\'s tools are always kept sharp!',
+      'His main languages & frameworks: Flutter, Python (FastAPI), PHP, JavaScript, HTML/CSS, C#/Unity, and Solidity. For data work: SQLite, SQLAlchemy, all the way to Hadoop.',
+      'His design weapons: Figma, Photoshop, Illustrator, Premiere Pro, After Effects, and Lightroom. For AI: YOLOv8, PCA, UMAP, Isolation Forest, and LMM/GEE statistics. Impressive, right?',
+    ],
+    dito: [
+      'Hello! I am Dito. I used to queue forever just to buy tourism tickets... until Rama interned at the Majalengka Tourism and Culture Office (Aug–Oct 2025).',
+      'He designed the end-to-end UI/UX and built a tourism ticket booking app with Flutter for web & Android. It was tested by more than 200 users!',
+      'His QR scan feature sped up ticket validation by 40%. He also designed the logo and branding. My queues run smoothly now!',
+    ],
+    nara: [
+      'Nice to meet you, I am Nara, the village researcher. My colleague Rama once did a research internship at JAIST, Japan (Jul–Sep 2026) — in Computer Vision & Reliability Analysis.',
+      'There he ran experiments on 8 object-detection configurations, built a PCA/UMAP/Isolation Forest pipeline, and analyzed 1,150 predictions using LMM/GEE and Association Rule Mining.',
+      'His project: Japanese Waste Detection — detecting waste with YOLOv8 and a FastAPI backend (REST API + SQLite/SQLAlchemy). Cool, right?',
+    ],
+    raka: [
+      'Yo! I am Raka, a traveling merchant. I trade between villages using Rama\'s technology: the Blockchain B2B Product Reservation DApp!',
+      'Its smart contracts are written in Solidity and run on the Ethereum Sepolia network. The storefront is built with React and connected to a MetaMask wallet.',
+      'Business-to-business product reservations become transparent and permanently recorded. My trade is safe and sound!',
+    ],
+    tania: [
+      'Hi, I am Tania, a farmer in this village. Rama once built us TaniXplore (2024), an agriculture platform integrated with the Maps API — finding farmland and fresh produce became easy!',
+      'He also built a Smart Door Notification based on IoT (2025) and an Anime Face Recognition project (2025). His hands are truly versatile.',
+      'Do not forget to stop by the gallery boards at the plaza — they tell the story of his visual design work for Laznas PYI!',
+    ],
+    sari: [
+      'Do stop by my inn, dear. I am Bu Sari. Many guests have told me tales of Rama\'s journey...',
+      'He did a research internship at JAIST (2026) and became a Visual Designer at Laznas PYI (Feb–Mar 2026) — managing content for 8 Instagram accounts with an average of +20 followers per account per month.',
+      'Before that he interned in UI/UX & Flutter at the Majalengka Tourism Office (2025), and during college he was active in the Glosarium Photography Club at UNIKOM in the Media Division (2023–2024) — content engagement rose 25%!',
+    ],
+    pio: [
+      'A letter for you! I am Pak Pos Pio, the postman. If you wish to reach Rama, note his addresses carefully:',
+      '📧 Email: nramahadi1@gmail.com\n💼 LinkedIn: linkedin.com/in/rama-hadi-nugraha\n🐙 GitHub: github.com/Ram4UnMi',
+      'Rama is open to opportunities in UI/UX, Mobile Development (Flutter), and Visual Design. Send good news — I will deliver it in a flash!',
+    ],
+    tirta: [
+      'Hoho... sit a while, kid. This pond has plenty of fish, but only a patient angler can catch the Golden Koi.',
+      'It is easy: cast your line, wait for the "!" mark — then REEL as fast as you can! Want to try? (After this dialog, the fishing pond will open)',
+    ],
+    garda: [
+      'HALT! ...Oh, you are a village visitor. Forgive me, I am Sergeant Garda. Lately slime monsters have been raiding our village from the eastern forest.',
+      'Help me defend the village! Build Arrow and Cannon towers in the arena and hold back the slime waves as long as you can. Ready? (After this dialog, the arena will open)',
+    ],
+  };
+  const SIGN_NAME_EN = {
+    welcome: '🌻 Village Welcome Board', board1: '🎨 Gallery Board: Visual Design',
+    board2: '🧪 Gallery Board: Tech & Research', board3: '🎓 Gallery Board: Education',
+  };
+  const SIGN_EN = {
+    welcome: [
+      '🌻 WELCOME TO PORTFOLIO VILLAGE 🌻\nA digital village by Rama Hadi Nugraha.',
+      'How to play: walk with WASD / arrow keys (on phones use the D-pad), then press E or the TALK button near a villager to chat.',
+      'There are 8 villagers holding Rama\'s portfolio stories, 1 fishing pond, and 1 tower defense arena. Happy exploring!',
+    ],
+    board1: [
+      '🎨 VISUAL DESIGN — Laznas PYI (Feb–Mar 2026)',
+      'As a Visual Designer, Rama created content for 8 Instagram accounts at once. His content insight mix was 65% / 22% / 12%, and each account grew by an average of +20 followers per month.',
+      'His design skills are backed by a BNSP Junior Graphic Design certification. His weapons: Photoshop, Illustrator, Figma, Premiere Pro, After Effects, Lightroom.',
+    ],
+    board2: [
+      '🧪 TECHNOLOGY & RESEARCH',
+      'Rama loves experimenting: Web3 & Solidity smart contracts, AR with Vuforia, YOLOv8 object detection, even data pipelines with Hadoop, OLAP Mondrian, and Spoon ETL.',
+      'In research he uses PCA, UMAP, Isolation Forest, Association Rule Mining, and statistical modeling with LMM and GEE.',
+    ],
+    board3: [
+      '🎓 EDUCATION',
+      'Bachelor\'s in Informatics Engineering — Universitas Komputer Indonesia (UNIKOM), 2022–2026. GPA 3.80.',
+      'Certifications: BNSP Data Analyst (LSP Informatika) and BNSP Junior Graphic Design (LKP DITEKINDO & West Java DISPORA).',
+    ],
+  };
+  const INFO_EN = {
+    tentang: {
+      title: '👋 About Me', npc: 'lurah',
+      body: '<p><b>Rama Hadi Nugraha</b> — UI/UX &amp; Mobile Developer · Visual Designer · Applied AI Research.</p>' +
+        '<p>Bachelor\'s in Informatics Engineering, Universitas Komputer Indonesia (2022–2026), GPA <b>3.80</b>. Holds <b>BNSP Data Analyst</b> and <b>BNSP Junior Graphic Design</b> certifications.</p>' +
+        '<p>In this village, Pak Lurah is the keeper of his story.</p>',
+    },
+    proyek: {
+      title: '🚀 Selected Projects', npc: 'dito',
+      body:
+        '<div class="proj-item"><b>🎟️ Tourism Ticket App — Disparbud Majalengka</b><span>End-to-end UI/UX &amp; Flutter (web/Android), 200+ test users, QR scan sped up validation by 40%. → Dito</span></div>' +
+        '<div class="proj-item"><b>🔬 Japanese Waste Detection — JAIST Research</b><span>YOLOv8 + FastAPI; 8 detection configurations, PCA/UMAP/Isolation Forest pipeline, LMM/GEE over 1,150 predictions. → Nara</span></div>' +
+        '<div class="proj-item"><b>🧑‍💼 Blockchain B2B Product Reservation DApp</b><span>Solidity smart contracts on Ethereum Sepolia, React + MetaMask frontend. → Raka</span></div>' +
+        '<div class="proj-item"><b>👩‍🌾 TaniXplore &amp; Other Projects</b><span>Agriculture platform with Maps API, Smart Door IoT, Anime Face Recognition. → Tania</span></div>' +
+        '<div class="proj-item"><b>🎨 Visual Design — Laznas PYI</b><span>Content for 8 Instagram accounts, +20 followers/account/month. → Gallery boards at the plaza</span></div>',
+    },
+    keahlian: {
+      title: '🛠️ Skills', npc: 'pandai',
+      body: '<p><b>Programming:</b> Flutter · Python/FastAPI · PHP · JavaScript · HTML/CSS · C#/Unity · Solidity</p>' +
+        '<p><b>Data:</b> SQLite · SQLAlchemy · Hadoop · OLAP Mondrian · Spoon ETL</p>' +
+        '<p><b>AI &amp; Research:</b> YOLOv8 · PCA · UMAP · Isolation Forest · Association Rule Mining · LMM/GEE · Vuforia AR</p>' +
+        '<p><b>Design:</b> Figma · Photoshop · Illustrator · Premiere Pro · After Effects · Lightroom</p>' +
+        '<p>In this village, Bang Bara the blacksmith keeps the complete list.</p>',
+    },
+    pengalaman: {
+      title: '💼 Experience', npc: 'sari',
+      body: '<p><b>Research Intern — JAIST</b> (Jul–Sep 2026): Computer Vision &amp; Reliability Analysis.</p>' +
+        '<p><b>Visual Designer — Laznas PYI</b> (Feb–Mar 2026).</p>' +
+        '<p><b>UI/UX &amp; Flutter Developer Intern — Disparbud Majalengka</b> (Aug–Oct 2025).</p>' +
+        '<p><b>Media Division — Glosarium Photography Club, UNIKOM</b> (Dec 2023–Dec 2024), engagement +25%.</p>' +
+        '<p>In this village, Bu Sari the innkeeper is the keeper of his story.</p>',
+    },
+    kontak: {
+      title: '✉️ Contact', npc: 'pio',
+      body: '<p>📧 Email: <a href="mailto:nramahadi1@gmail.com">nramahadi1@gmail.com</a></p>' +
+        '<p>💼 LinkedIn: <a href="https://www.linkedin.com/in/rama-hadi-nugraha" target="_blank" rel="noopener">linkedin.com/in/rama-hadi-nugraha</a></p>' +
+        '<p>🐙 GitHub: <a href="https://github.com/Ram4UnMi" target="_blank" rel="noopener">github.com/Ram4UnMi</a></p>' +
+        '<p>Rama is open to opportunities in UI/UX, Mobile Development (Flutter), and Visual Design. In this village, Pak Pos Pio will gladly deliver your message!</p>',
+    },
+  };
+  const TUT = {
+    en: {
+      title: '🎮 Welcome to Portfolio Village!',
+      start: 'START PLAYING ▶',
+      body: '<p>You are a <b>village visitor</b> — the character in the red shirt. This village is the living portfolio of <b>Rama Hadi Nugraha</b>: every villager holds one piece of his story!</p>' +
+        '<h3>🕹️ How to Play</h3><ul>' +
+        '<li><b>Move:</b> WASD / arrow keys (on phones: the on-screen D-pad).</li>' +
+        '<li><b>Talk:</b> approach a villager, then press <b>E</b> / Space / the TALK button. Villagers marked <b>"!"</b> have not been talked to yet.</li>' +
+        '<li><b>Mission:</b> talk to <b>8 villagers</b> to unlock the whole portfolio — each new villager gives you <b>+15 🪙</b>!</li>' +
+        '<li><b>The navbar above</b> holds your coins &amp; progress, plus shortcut buttons to Projects, About, Skills, Experience, and Contact — read instantly or teleport to the right villager.</li></ul>' +
+        '<h3>🎣 Mini Games</h3><ul>' +
+        '<li><b>Fishing:</b> talk to Grandpa Tirta at the pond (southwest) or tap 🎣 Fishing in the navbar.</li>' +
+        '<li><b>Tower Defense:</b> talk to Sergeant Garda at the arena (northeast) or tap 🏰 Defense.</li>' +
+        '<li>Your caught fish and best wave are saved automatically — and they earn you village coins!</li></ul>' +
+        '<p class="tutorial-note">In a hurry? Open the <a href="portofolio.html">📄 text portfolio</a> to read everything without playing. This game is 100% offline — no internet needed at all.</p>',
+    },
+    id: {
+      title: '🎮 Selamat Datang di Desa Portofolio!',
+      start: 'MULAI BERMAIN ▶',
+      body: '<p>Kamu adalah <b>pengunjung desa</b> — karakter berbaju merah. Desa ini adalah portofolio hidup milik <b>Rama Hadi Nugraha</b>: setiap warga menyimpan satu bagian ceritanya!</p>' +
+        '<h3>🕹️ Cara Bermain</h3><ul>' +
+        '<li><b>Bergerak:</b> WASD / tombol panah (di HP: D-pad di layar).</li>' +
+        '<li><b>Bicara:</b> dekati warga lalu tekan <b>E</b> / Spasi / tombol BICARA. Warga bertanda <b>"!"</b> belum pernah diajak bicara.</li>' +
+        '<li><b>Misi:</b> ajak bicara <b>8 warga</b> untuk membuka seluruh portofolio — setiap warga baru memberimu <b>+15 🪙</b>!</li>' +
+        '<li><b>Navbar di atas</b> berisi koin &amp; progresmu, plus tombol pintas ke Proyek, Tentang, Keahlian, Pengalaman, dan Kontak — bisa baca cepat atau teleport ke warga yang bersangkutan.</li></ul>' +
+        '<h3>🎣 Mini Game</h3><ul>' +
+        '<li><b>Mancing:</b> bicara dengan Kakek Tirta di kolam (barat daya) atau klik 🎣 Mancing di navbar.</li>' +
+        '<li><b>Tower Defense:</b> bicara dengan Sersan Garda di arena (timur laut) atau klik 🏰 Defense.</li>' +
+        '<li>Ikan yang tertangkap dan rekor wave-mu tersimpan otomatis, dan menambah koin desa!</li></ul>' +
+        '<p class="tutorial-note">Buru-buru? Buka <a href="portofolio.html">📄 Portofolio versi teks</a> untuk membaca semuanya tanpa bermain. Game ini 100% offline — tidak butuh internet sama sekali.</p>',
+    },
+  };
+  const NAV_TEXT = {
+    proyek: { en: '🚀 Projects', id: '🚀 Proyek' },
+    tentang: { en: '👋 About', id: '👋 Tentang' },
+    keahlian: { en: '🛠️ Skills', id: '🛠️ Keahlian' },
+    pengalaman: { en: '💼 Experience', id: '💼 Pengalaman' },
+    kontak: { en: '✉️ Contact', id: '✉️ Kontak' },
+  };
+  function homePages() {
+    const owned = STATE.houseUpgrades.size;
+    if (STATE.lang === 'en') {
+      return owned >= 6
+        ? ['This is the Guest House — your home while in the village. Thanks to all the coins you gathered, it is now the prettiest house in the whole village! ⛲🌸', 'The Village Chief would be proud. Thank you for taking care of this house!']
+        : ['This is the Guest House — your home while in the village. The Chief said it stood empty for a long time... peeling paint, a roof patched here and there.', 'But worry not! Gather coins by chatting with villagers, fishing, and defending the village — then shop at the Decoration Shop to beautify this house.', 'You currently own ' + owned + ' of 6 decorations. Let\'s open the shop catalog!'];
+    }
+    return owned >= 6
+      ? ['Ini Rumah Tamu — tempat tinggalmu selama di desa. Berkat jerih payahmu mengumpulkan koin, rumah ini sekarang jadi yang tercantik di seluruh desa! ⛲🌸', 'Pak Lurah pasti bangga. Terima kasih sudah merawat rumah ini!']
+      : ['Ini Rumah Tamu — tempat tinggalmu selama di desa. Kata Pak Lurah, rumah ini sudah lama kosong... catnya mengelupas, atapnya bertambal di sana-sini.', 'Tapi jangan khawatir! Kumpulkan koin dari mengobrol dengan warga, memancing, dan mempertahankan desa — lalu belanja di Toko Dekorasi untuk mempercantik rumah ini.', 'Saat ini kamu punya ' + owned + ' dari 6 perabotan. Ayo buka katalog tokonya!'];
+  }
+  function applyLang() {
+    const en = STATE.lang === 'en';
+    const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+    const setH = (id, txt) => { const el = document.getElementById(id); if (el) el.innerHTML = txt; };
+    set('nav-brand', en ? '🏡 PORTFOLIO VILLAGE' : '🏡 DESA PORTOFOLIO');
+    document.querySelectorAll('[data-section]').forEach((b) => {
+      const t = NAV_TEXT[b.getAttribute('data-section')];
+      if (t) b.textContent = L(t);
+    });
+    set('btn-shop', en ? '🛒 Shop' : '🛒 Toko');
+    set('nav-fish', en ? '🎣 Fishing' : '🎣 Mancing');
+    set('nav-td', '🏰 Defense');
+    set('nav-teks', en ? '📄 Portfolio' : '📄 Portofolio');
+    set('btn-lang', en ? '🌐 EN' : '🌐 ID');
+    set('t-action', en ? 'TALK' : 'BICARA');
+    set('dialog-next', L(STR.dialogNext));
+    const T = TUT[STATE.lang];
+    set('tut-title', T.title);
+    setH('tut-body', T.body);
+    set('tut-start', T.start);
+    const le = document.getElementById('tut-lang-en');
+    const li = document.getElementById('tut-lang-id');
+    if (le) le.classList.toggle('active', en);
+    if (li) li.classList.toggle('active', !en);
+    set('info-visit', en ? '📍 Visit in the Village' : '📍 Kunjungi di Desa');
+    set('info-close-btn', en ? 'Close' : 'Tutup');
+    set('shop-title', en ? '🛒 Village Decoration Shop' : '🛒 Toko Dekorasi Desa');
+    setH('shop-sub-text', en ? "Bang Bara's catalog — beautify the <b>Guest House</b>, your home in the village. Balance:" : 'Katalog Bang Bara — percantik <b>Rumah Tamu</b> tempatmu tinggal selama di desa. Saldo:');
+    set('shop-note', en ? 'Coins come from chatting with villagers (+15), fishing (fish points = coins), and clearing tower defense waves (bonus = coins).' : 'Koin didapat dari mengobrol dengan warga (+15), memancing (poin ikan = koin), dan memenangkan wave tower defense (bonus = koin).');
+    set('shop-close-btn', en ? 'Close' : 'Tutup');
+    set('shop-fish-link', en ? '🎣 Earn Coins: Fishing' : '🎣 Cari Koin: Mancing');
+    set('loading-title', en ? '🏡 Loading Portfolio Village...' : '🏡 Memuat Desa Portofolio...');
+    set('loading-sub', en ? 'Building a pixel village for you. One moment!' : 'Membangun desa pixel untukmu. Sebentar ya!');
+    // papan nama rumah mengikuti bahasa terpilih
+    HOUSES.forEach((h, i) => { houseSprites[i] = buildHouseSprite(h, i); });
+  }
+  function setLang(l) {
+    STATE.lang = l;
+    persist();
+    applyLang();
+    if (typeof shopModal !== 'undefined' && !shopModal.classList.contains('hidden')) renderShop();
+  }
+  document.getElementById('btn-lang').addEventListener('click', () => setLang(STATE.lang === 'en' ? 'id' : 'en'));
+  document.getElementById('tut-lang-en').addEventListener('click', () => setLang('en'));
+  document.getElementById('tut-lang-id').addEventListener('click', () => setLang('id'));
+
   let toastTimer = null;
   function toast(text) {
     const el = document.getElementById('toast');
@@ -311,162 +553,307 @@
   }
   const WATER_TILES = [makeWaterTile(0), makeWaterTile(1), makeWaterTile(2)];
 
-  /* ---------------- Sprite RUMAH ---------------- */
+  /* ---------------- Sprite RUMAH (4 gaya arsitektur dunia) ---------------- */
+  function drawPlaque(g, W, y, label, dark) {
+    g.font = 'bold 15px "Trebuchet MS", sans-serif';
+    const tw = g.measureText(label).width + 22;
+    const px = W / 2 - tw / 2;
+    g.fillStyle = dark ? '#2e2620' : '#6b4a2a'; g.fillRect(px - 2, y - 2, tw + 4, 25);
+    g.fillStyle = dark ? '#4a3b28' : '#a9743f'; g.fillRect(px, y, tw, 21);
+    g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(px, y + 16, tw, 5);
+    g.fillStyle = dark ? '#ffd98a' : '#fff2cf'; g.textAlign = 'center';
+    g.fillText(label, W / 2, y + 15.5);
+  }
+
+  // --- Gaya MEDIEVAL EROPA: batu + setengah kayu, atap curam ---
+  function houseMedieval(g, h, W, wallH, re, WALL, ROOF, r) {
+    const stoneTop = re + wallH * 0.48;
+    // bagian batu (bawah)
+    g.fillStyle = '#98938a'; g.fillRect(2, stoneTop, W - 4, wallH * 0.52);
+    g.fillStyle = '#8a857c';
+    for (let y = stoneTop + 8; y < re + wallH - 4; y += 11) g.fillRect(2, y, W - 4, 2);
+    for (let i = 0; i < W / 4; i++) g.fillRect(4 + r() * (W - 10), stoneTop + 4 + r() * (wallH * 0.44), 6, 3.4);
+    // plester + rangka kayu (atas)
+    g.fillStyle = WALL; g.fillRect(2, re, W - 4, wallH * 0.48);
+    g.fillStyle = '#5d4630';
+    g.fillRect(2, re, 7, wallH); g.fillRect(W - 9, re, 7, wallH); g.fillRect(W / 2 - 3, re, 6, wallH * 0.48);
+    g.fillRect(2, re, W - 4, 6); g.fillRect(2, stoneTop - 4, W - 4, 6);
+    g.beginPath();
+    g.moveTo(10, re + 8); g.lineTo(30, stoneTop - 6); g.lineTo(36, stoneTop - 6); g.lineTo(16, re + 8);
+    g.moveTo(W - 10, re + 8); g.lineTo(W - 30, stoneTop - 6); g.lineTo(W - 36, stoneTop - 6); g.lineTo(W - 16, re + 8);
+    g.fill();
+    // gabel + jendela bundar
+    g.fillStyle = shade(WALL, 0.92);
+    g.beginPath(); g.moveTo(18, re + 4); g.lineTo(W - 18, re + 4); g.lineTo(W / 2, 14); g.closePath(); g.fill();
+    g.fillStyle = '#5d4630'; g.beginPath(); g.arc(W / 2, re - 16, 8.6, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#ffe9a8'; g.beginPath(); g.arc(W / 2, re - 16, 5.6, 0, Math.PI * 2); g.fill();
+    // atap curam sirap batu tulis
+    g.save();
+    g.beginPath();
+    g.moveTo(-4, re + 12); g.lineTo(W + 4, re + 12); g.lineTo(W / 2 + 27, 2); g.lineTo(W / 2 - 27, 2);
+    g.closePath(); g.clip();
+    g.fillStyle = ROOF; g.fillRect(0, 0, W, re + 14);
+    for (let y = 4, row = 0; y < re + 14; y += 9, row++) {
+      g.fillStyle = row % 2 ? shade(ROOF, 0.85) : shade(ROOF, 1.06);
+      g.fillRect(0, y, W, 5);
+      g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(0, y + 5, W, 1.6);
+    }
+    g.restore();
+    g.fillStyle = shade(ROOF, 1.2); g.fillRect(W / 2 - 29, 0, 58, 6);
+    // cerobong batu
+    g.fillStyle = '#8a857c'; g.fillRect(W - 54, 10, 15, 34);
+    g.fillStyle = '#75726b'; g.fillRect(W - 56, 7, 19, 6);
+    // pintu lengkung besi
+    const doorW = 28, doorX = W / 2 - doorW / 2, doorY = re + wallH - 46;
+    g.fillStyle = '#4a3a28'; g.fillRect(doorX - 3, doorY - 3, doorW + 6, 49);
+    g.fillStyle = '#6e4a26';
+    g.fillRect(doorX, doorY + 6, doorW, 40);
+    g.beginPath(); g.arc(W / 2, doorY + 6, doorW / 2, Math.PI, 0); g.fill();
+    g.fillStyle = '#3a332c'; g.fillRect(doorX, doorY + 14, doorW, 3); g.fillRect(doorX, doorY + 32, doorW, 3);
+    g.fillStyle = '#c9ccd1'; g.beginPath(); g.arc(W / 2 + 8, doorY + 24, 2.6, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#9aa0a8'; g.fillRect(doorX - 5, re + wallH - 4, doorW + 10, 4);
+    g.fillStyle = '#a03d2d'; g.fillRect(doorX + 3, re + wallH - 1, doorW - 6, 3.4);
+    // jendela kecil berpalang
+    [W * 0.2, W * 0.8].forEach((wx) => {
+      if (Math.abs(wx - W / 2) < 36) return;
+      g.fillStyle = '#4a3a28'; g.fillRect(wx - 10, re + 22, 20, 22);
+      g.fillStyle = '#ffe9a8'; g.fillRect(wx - 7, re + 25, 14, 16);
+      g.fillStyle = '#4a3a28'; g.fillRect(wx - 1, re + 25, 2, 16); g.fillRect(wx - 7, re + 32, 14, 2);
+    });
+    // panji kecil di samping pintu
+    g.fillStyle = '#5d4630'; g.fillRect(doorX - 24, doorY - 8, 3, 30);
+    g.fillStyle = ROOF; g.fillRect(doorX - 21, doorY - 8, 13, 17);
+    g.fillStyle = '#fff2cf'; g.font = 'bold 11px sans-serif'; g.textAlign = 'center';
+    g.fillText(houseLabel(h).charAt(0), doorX - 14.5, doorY + 4.5);
+    return { doorX, doorY, doorW, plaqueY: re + wallH * 0.48 - 32 };
+  }
+
+  // --- Gaya TIMUR TENGAH: batu pasir, kubah, lengkung ---
+  function houseMideast(g, h, W, wallH, re, WALL, ROOF, r) {
+    // dinding batu pasir berblok
+    g.fillStyle = WALL; g.fillRect(2, re, W - 4, wallH);
+    g.fillStyle = shade(WALL, 0.9);
+    for (let y = re + 12; y < re + wallH; y += 13) g.fillRect(2, y, W - 4, 2);
+    for (let i = 0; i < W / 3.4; i++) g.fillRect(4 + r() * (W - 10), re + 4 + r() * (wallH - 8), 5, 2.6);
+    g.fillStyle = shade(WALL, 0.8); g.fillRect(2, re + wallH - 10, W - 4, 10);
+    // pita ornamen geometris
+    g.fillStyle = ROOF; g.fillRect(2, re + 14, W - 4, 9);
+    g.fillStyle = '#fff2cf';
+    for (let x = 8; x < W - 8; x += 14) {
+      g.beginPath(); g.moveTo(x, re + 21); g.lineTo(x + 4, re + 15.5); g.lineTo(x + 8, re + 21); g.closePath(); g.fill();
+    }
+    // parapet bergerigi + kubah
+    g.fillStyle = shade(WALL, 0.94); g.fillRect(0, re - 12, W, 13);
+    g.fillStyle = shade(WALL, 0.85);
+    for (let x = 2; x < W - 8; x += 15) g.fillRect(x, re - 19, 9, 8);
+    g.fillStyle = ROOF;
+    g.beginPath(); g.arc(W / 2, re - 10, Math.min(30, W * 0.2), Math.PI, 0); g.fill();
+    g.fillStyle = shade(ROOF, 1.12);
+    g.beginPath(); g.arc(W / 2, re - 10, Math.min(30, W * 0.2) * 0.62, Math.PI, 0); g.fill();
+    g.fillStyle = '#d9b84a'; g.fillRect(W / 2 - 1.4, re - 10 - Math.min(30, W * 0.2) - 8, 2.8, 9);
+    g.beginPath(); g.arc(W / 2, re - 12 - Math.min(30, W * 0.2), 3, 0, Math.PI * 2); g.fill();
+    // cerobong pipa pandai besi
+    if (h.label === 'PANDAI BESI') {
+      g.fillStyle = '#7c7f85'; g.fillRect(27, re - 28, 10, 28);
+      g.fillStyle = '#5f6266'; g.fillRect(25, re - 31, 14, 5);
+    }
+    // pintu lengkung tinggi + kanopi bergaris
+    const doorW = 26, doorX = W / 2 - doorW / 2, doorY = re + wallH - 48;
+    g.fillStyle = shade(WALL, 0.7); g.fillRect(doorX - 4, doorY - 4, doorW + 8, 52);
+    g.fillStyle = '#2e6f6a';
+    g.fillRect(doorX, doorY + 5, doorW, 43);
+    g.beginPath(); g.arc(W / 2, doorY + 5, doorW / 2, Math.PI, 0); g.fill();
+    g.fillStyle = '#256058'; g.fillRect(W / 2 - 1.2, doorY - 7, 2.4, 55);
+    g.fillStyle = '#d9b84a'; g.beginPath(); g.arc(W / 2 - 6, doorY + 26, 2.2, 0, Math.PI * 2); g.arc(W / 2 + 6, doorY + 26, 2.2, 0, Math.PI * 2); g.fill();
+    // kanopi
+    g.fillStyle = '#fff2cf'; g.fillRect(doorX - 10, doorY - 16, doorW + 20, 7);
+    g.fillStyle = ROOF;
+    for (let x = doorX - 10; x < doorX + doorW + 16; x += 10) g.fillRect(x, doorY - 16, 5, 7);
+    // jendela lengkung berkisi
+    [W * 0.2, W * 0.8].forEach((wx) => {
+      if (Math.abs(wx - W / 2) < 36) return;
+      g.fillStyle = shade(WALL, 0.7); g.fillRect(wx - 10, re + 34, 20, 26);
+      g.fillStyle = '#ffe9a8';
+      g.fillRect(wx - 7, re + 40, 14, 17);
+      g.beginPath(); g.arc(wx, re + 40, 7, Math.PI, 0); g.fill();
+      g.strokeStyle = shade(WALL, 0.6); g.lineWidth = 1.6;
+      g.beginPath(); g.moveTo(wx, re + 33); g.lineTo(wx, re + 57); g.moveTo(wx - 7, re + 46); g.lineTo(wx + 7, re + 46); g.stroke();
+    });
+    return { doorX, doorY, doorW, plaqueY: re + 26 };
+  }
+
+  // --- Gaya ASIA TIMUR: atap melengkung, pilar merah ---
+  function houseEastasia(g, h, W, wallH, re, WALL, ROOF, r) {
+    // dinding + pilar merah
+    g.fillStyle = WALL; g.fillRect(4, re, W - 8, wallH);
+    g.fillStyle = shade(WALL, 0.93);
+    for (let i = 0; i < W / 3; i++) g.fillRect(4 + r() * (W - 10), re + r() * (wallH - 4), 3, 2);
+    g.fillStyle = '#8d8d93'; g.fillRect(2, re + wallH - 9, W - 4, 9);
+    g.fillStyle = '#a33327';
+    g.fillRect(4, re, 7, wallH); g.fillRect(W - 11, re, 7, wallH);
+    if (W > 200) g.fillRect(W / 2 - 3, re, 6, wallH);
+    g.fillStyle = '#7e2a20'; g.fillRect(2, re, W - 4, 7);
+    // atap melengkung dua lapis dengan ujung terangkat
+    function roofLayer(yBase, inset, hgt, col) {
+      g.save();
+      g.beginPath();
+      g.moveTo(inset - 10, yBase); g.lineTo(W - inset + 10, yBase);
+      g.lineTo(W / 2 + 30, yBase - hgt); g.lineTo(W / 2 - 30, yBase - hgt);
+      g.closePath(); g.clip();
+      g.fillStyle = col; g.fillRect(0, yBase - hgt - 2, W, hgt + 4);
+      g.fillStyle = 'rgba(0,0,0,.2)';
+      for (let x = 6; x < W; x += 9) g.fillRect(x, yBase - hgt - 2, 2, hgt + 4);
+      g.fillStyle = 'rgba(255,255,255,.08)';
+      g.fillRect(0, yBase - 5, W, 3);
+      g.restore();
+      // ujung atap terangkat
+      g.fillStyle = col;
+      g.beginPath(); g.moveTo(inset - 10, yBase); g.lineTo(inset - 20, yBase - 11); g.lineTo(inset + 2, yBase - 3); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(W - inset + 10, yBase); g.lineTo(W - inset + 20, yBase - 11); g.lineTo(W - inset - 2, yBase - 3); g.closePath(); g.fill();
+    }
+    roofLayer(re + 14, 2, re - 8, ROOF);
+    g.fillStyle = shade(ROOF, 1.25); g.fillRect(W / 2 - 32, 0, 64, 6);
+    g.fillStyle = shade(ROOF, 0.8);
+    g.beginPath(); g.arc(W / 2 - 34, 3, 4.4, 0, Math.PI * 2); g.arc(W / 2 + 34, 3, 4.4, 0, Math.PI * 2); g.fill();
+    // pintu ganda berkisi
+    const doorW = 30, doorX = W / 2 - doorW / 2, doorY = re + wallH - 44;
+    g.fillStyle = '#7e2a20'; g.fillRect(doorX - 3, doorY - 3, doorW + 6, 47);
+    g.fillStyle = '#5d3a22'; g.fillRect(doorX, doorY, doorW, 44);
+    g.fillStyle = '#8a5a30'; g.fillRect(doorX + 3, doorY + 3, doorW - 6, 12);
+    g.strokeStyle = '#5d3a22'; g.lineWidth = 1.6;
+    for (let i = 1; i < 4; i++) { g.beginPath(); g.moveTo(doorX + 3 + i * 6, doorY + 3); g.lineTo(doorX + 3 + i * 6, doorY + 15); g.stroke(); }
+    g.fillStyle = '#d9b84a';
+    g.beginPath(); g.arc(W / 2 - 3, doorY + 26, 2.2, 0, Math.PI * 2); g.arc(W / 2 + 3, doorY + 26, 2.2, 0, Math.PI * 2); g.fill();
+    // jendela kisi bercahaya
+    [W * 0.2, W * 0.8].forEach((wx) => {
+      if (Math.abs(wx - W / 2) < 38) return;
+      g.fillStyle = '#7e2a20'; g.fillRect(wx - 12, re + 24, 24, 24);
+      g.fillStyle = '#ffe9a8'; g.fillRect(wx - 9, re + 27, 18, 18);
+      g.strokeStyle = '#b08954'; g.lineWidth = 1.6;
+      g.beginPath();
+      g.moveTo(wx - 3, re + 27); g.lineTo(wx - 3, re + 45); g.moveTo(wx + 3, re + 27); g.lineTo(wx + 3, re + 45);
+      g.moveTo(wx - 9, re + 33); g.lineTo(wx + 9, re + 33); g.moveTo(wx - 9, re + 39); g.lineTo(wx + 9, re + 39);
+      g.stroke();
+    });
+    // lentera kertas merah di kedua sisi pintu
+    [doorX - 13, doorX + doorW + 6].forEach((lx) => {
+      g.fillStyle = '#3a2c1c'; g.fillRect(lx + 2.4, doorY - 6, 2, 6);
+      g.fillStyle = '#d8402e'; g.fillRect(lx, doorY, 7, 10);
+      g.fillStyle = '#ff7a5c'; g.fillRect(lx + 1.4, doorY + 2, 4.2, 6);
+    });
+    return { doorX, doorY, doorW, plaqueY: re + 12, darkPlaque: true };
+  }
+
+  // --- Gaya ASIA TENGGARA: rumah panggung kayu, atap jerami tinggi ---
+  function houseSeasia(g, h, W, wallH, re, WALL, ROOF, r) {
+    const floorY = re + wallH - 16; // lantai panggung terangkat
+    // tiang panggung + penguat silang
+    g.fillStyle = '#5d4630';
+    [10, W / 2 - 3, W - 16].forEach((px) => g.fillRect(px, floorY, 6, 16));
+    g.save();
+    g.strokeStyle = '#5d4630'; g.lineWidth = 3;
+    g.beginPath(); g.moveTo(12, floorY + 14); g.lineTo(W / 2 - 2, floorY + 2); g.moveTo(W - 14, floorY + 14); g.lineTo(W / 2 + 4, floorY + 2); g.stroke();
+    g.restore();
+    // dinding papan kayu
+    g.fillStyle = WALL; g.fillRect(4, re, W - 8, wallH - 16);
+    g.fillStyle = shade(WALL, 0.86);
+    for (let y = re + 7; y < floorY - 2; y += 8) g.fillRect(4, y, W - 8, 1.8);
+    g.fillStyle = shade(WALL, 0.75);
+    for (let i = 0; i < W / 4; i++) g.fillRect(6 + r() * (W - 12), re + 3 + r() * (wallH - 24), 2.4, 5);
+    // pita anyaman di bawah atap
+    g.fillStyle = shade(WALL, 0.7); g.fillRect(4, re, W - 8, 9);
+    g.strokeStyle = shade(WALL, 1.25); g.lineWidth = 1.4;
+    for (let x = 6; x < W - 8; x += 9) {
+      g.beginPath(); g.moveTo(x, re + 8); g.lineTo(x + 5, re + 1); g.moveTo(x, re + 1); g.lineTo(x + 5, re + 8); g.stroke();
+    }
+    // gabel ukiran + ornamen lingkaran
+    g.fillStyle = shade(WALL, 0.8);
+    g.beginPath(); g.moveTo(16, re + 2); g.lineTo(W - 16, re + 2); g.lineTo(W / 2, 12); g.closePath(); g.fill();
+    g.fillStyle = '#5d4630'; g.beginPath(); g.arc(W / 2, re - 14, 6.4, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#d9b84a'; g.beginPath(); g.arc(W / 2, re - 14, 3, 0, Math.PI * 2); g.fill();
+    // atap jerami tinggi bertekstur
+    g.save();
+    g.beginPath();
+    g.moveTo(-6, re + 16); g.lineTo(W + 6, re + 16); g.lineTo(W / 2 + 17, 0); g.lineTo(W / 2 - 17, 0);
+    g.closePath(); g.clip();
+    g.fillStyle = ROOF; g.fillRect(0, 0, W, re + 18);
+    g.strokeStyle = shade(ROOF, 0.78); g.lineWidth = 1.6;
+    for (let x = 4; x < W; x += 6) { g.beginPath(); g.moveTo(x, 2); g.lineTo(x - 3, re + 16); g.stroke(); }
+    g.fillStyle = 'rgba(0,0,0,.16)';
+    g.fillRect(0, re * 0.45, W, 4); g.fillRect(0, re * 0.75, W, 4);
+    g.restore();
+    g.fillStyle = shade(ROOF, 1.15); g.fillRect(W / 2 - 18, 0, 36, 5);
+    // pintu + tangga
+    const doorW = 25, doorX = W / 2 - doorW / 2, doorY = floorY - 40;
+    g.fillStyle = '#4a3823'; g.fillRect(doorX - 3, doorY - 3, doorW + 6, 43);
+    g.fillStyle = '#6e4a26'; g.fillRect(doorX, doorY, doorW, 40);
+    g.fillStyle = shade(WALL, 0.8); g.fillRect(doorX + 4, doorY + 5, doorW - 8, 13);
+    g.fillStyle = '#d9b84a'; g.beginPath(); g.arc(doorX + doorW - 6, doorY + 24, 2.2, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#5d4630';
+    g.fillRect(doorX + 2, floorY, doorW - 4, 4);
+    g.fillRect(doorX + 5, floorY + 5, doorW - 10, 4);
+    g.fillRect(doorX + 8, floorY + 10, doorW - 16, 4);
+    // jendela kecil dengan daun terbuka
+    [W * 0.22, W * 0.78].forEach((wx) => {
+      if (Math.abs(wx - W / 2) < 34) return;
+      g.fillStyle = '#4a3823'; g.fillRect(wx - 9, re + 22, 18, 18);
+      g.fillStyle = '#ffe9a8'; g.fillRect(wx - 6.4, re + 24.6, 12.8, 12.8);
+      g.fillStyle = shade(WALL, 0.72);
+      g.beginPath(); g.moveTo(wx - 9, re + 22); g.lineTo(wx - 16, re + 27); g.lineTo(wx - 16, re + 42); g.lineTo(wx - 9, re + 40); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(wx + 9, re + 22); g.lineTo(wx + 16, re + 27); g.lineTo(wx + 16, re + 42); g.lineTo(wx + 9, re + 40); g.closePath(); g.fill();
+    });
+    return { doorX, doorY, doorW, plaqueY: re + 14 };
+  }
+
   function makeHouseSprite(h, opts) {
     opts = opts || {};
     const WALL = opts.wall || h.wall;
     const ROOF = opts.roof || h.roof;
-    const W = h.w * TILE, wallH = h.h * TILE, roofExtra = 58;
+    const W = h.w * TILE, wallH = h.h * TILE;
+    const roofExtra = h.style === 'mideast' ? 46 : h.style === 'seasia' ? 80 : h.style === 'eastasia' ? 64 : 68;
     const c = mkCanvas(W, wallH + roofExtra), g = c.getContext('2d');
     const r = rng(h.x * 31 + h.y * 57);
-    // --- dinding ---
-    g.fillStyle = WALL; g.fillRect(4, roofExtra, W - 8, wallH);
-    g.fillStyle = shade(WALL, 0.94);
-    for (let i = 0; i < W / 3; i++) g.fillRect(4 + r() * (W - 10), roofExtra + r() * (wallH - 4), 3, 2);
-    // fondasi batu
-    g.fillStyle = '#8d8d93'; g.fillRect(2, roofExtra + wallH - 12, W - 4, 12);
-    g.fillStyle = '#75757c'; g.fillRect(2, roofExtra + wallH - 12, W - 4, 3);
-    // balok kayu
-    g.fillStyle = shade(WALL, 0.68);
-    g.fillRect(4, roofExtra, 6, wallH); g.fillRect(W - 10, roofExtra, 6, wallH);
-    g.fillRect(4, roofExtra, W - 8, 6);
-    // --- kesan usang (Rumah Tamu sebelum dicat) ---
+    let geo;
+    if (h.style === 'mideast') geo = houseMideast(g, h, W, wallH, roofExtra, WALL, ROOF, r);
+    else if (h.style === 'eastasia') geo = houseEastasia(g, h, W, wallH, roofExtra, WALL, ROOF, r);
+    else if (h.style === 'seasia') geo = houseSeasia(g, h, W, wallH, roofExtra, WALL, ROOF, r);
+    else geo = houseMedieval(g, h, W, wallH, roofExtra, WALL, ROOF, r);
+    // kesan usang (Rumah Tamu sebelum direnovasi)
     if (opts.shabby) {
       g.fillStyle = 'rgba(96,76,44,.20)';
-      g.fillRect(4, roofExtra, W - 8, wallH);
+      g.fillRect(2, roofExtra + 6, W - 4, wallH - 8);
       g.strokeStyle = 'rgba(70,54,32,.55)'; g.lineWidth = 1.6;
       g.beginPath();
-      g.moveTo(16, roofExtra + 12); g.lineTo(21, roofExtra + 24); g.lineTo(17, roofExtra + 34);
+      g.moveTo(16, roofExtra + 14); g.lineTo(21, roofExtra + 26); g.lineTo(17, roofExtra + 36);
       g.moveTo(W - 20, roofExtra + 30); g.lineTo(W - 15, roofExtra + 44);
       g.stroke();
-      g.fillStyle = 'rgba(120,96,58,.5)';
-      g.fillRect(24, roofExtra + wallH - 34, 15, 11);
-      g.fillRect(W - 42, roofExtra + 16, 12, 9);
     }
-    // --- segitiga gabel ---
-    g.fillStyle = shade(WALL, 0.9);
-    g.beginPath();
-    g.moveTo(14, roofExtra + 2); g.lineTo(W - 14, roofExtra + 2); g.lineTo(W / 2, 12);
-    g.closePath(); g.fill();
-    // jendela gabel
-    g.fillStyle = '#5d4020'; g.fillRect(W / 2 - 8, roofExtra - 24, 16, 16);
-    g.fillStyle = '#ffe9a8'; g.fillRect(W / 2 - 5.5, roofExtra - 21.5, 11, 11);
-    // --- atap (trapesium + sirap) ---
-    g.save();
-    g.beginPath();
-    g.moveTo(-2, roofExtra + 8); g.lineTo(W + 2, roofExtra + 8);
-    g.lineTo(W / 2 + 34, 2); g.lineTo(W / 2 - 34, 2);
-    g.closePath(); g.clip();
-    g.fillStyle = ROOF; g.fillRect(0, 0, W, roofExtra + 10);
-    for (let y = 4, row = 0; y < roofExtra + 10; y += 9, row++) {
-      g.fillStyle = row % 2 ? shade(ROOF, 0.84) : shade(ROOF, 1.05);
-      g.fillRect(0, y, W, 5);
-      g.fillStyle = 'rgba(0,0,0,.16)'; g.fillRect(0, y + 5, W, 1.6);
-    }
-    g.fillStyle = 'rgba(255,255,255,.13)';
-    g.beginPath();
-    g.moveTo(W / 2 - 34, 2); g.lineTo(W / 2 + 34, 2); g.lineTo(W + 2, roofExtra + 8); g.lineTo(W / 2, roofExtra + 8);
-    g.closePath(); g.fill();
-    g.restore();
-    g.fillStyle = shade(ROOF, 1.18); g.fillRect(W / 2 - 36, 0, 72, 6);
-    // tambalan atap usang / bubungan premium
     if (opts.shabbyRoof) {
-      g.fillStyle = 'rgba(40,32,22,.4)';
-      g.fillRect(W * 0.24, 22, 20, 13);
-      g.fillRect(W * 0.68, 34, 16, 11);
-      g.fillStyle = 'rgba(24,20,14,.5)';
-      g.fillRect(W * 0.24, 22, 20, 3);
+      g.fillStyle = 'rgba(40,32,22,.38)';
+      g.fillRect(W * 0.24, 14, 20, 12);
+      g.fillRect(W * 0.66, 26, 16, 10);
     }
     if (opts.premium) {
-      g.fillStyle = shade(ROOF, 1.3);
-      for (let i = 0; i < 5; i++) { g.beginPath(); g.arc(W / 2 - 28 + i * 14, 3, 3.6, 0, Math.PI * 2); g.fill(); }
       g.fillStyle = '#ffd93d';
-      g.beginPath(); g.arc(W / 2, -1, 3.4, 0, Math.PI * 2); g.fill();
+      for (let i = 0; i < 4; i++) { g.beginPath(); g.arc(W / 2 - 21 + i * 14, 3, 3, 0, Math.PI * 2); g.fill(); }
     }
-    // cerobong Balai Desa & Pandai Besi
-    if (h.label === 'BALAI DESA') {
-      g.fillStyle = '#8d8d93'; g.fillRect(W - 52, 6, 15, 30);
-      g.fillStyle = '#75757c'; g.fillRect(W - 54, 3, 19, 6);
-    }
-    if (h.label === 'PANDAI BESI') {
-      g.fillStyle = '#7c7f85'; g.fillRect(28, 10, 14, 27);
-      g.fillStyle = '#5f6266'; g.fillRect(26, 7, 18, 6);
-    }
-    // --- pintu ---
-    const doorW = 27, doorX = W / 2 - doorW / 2, doorY = roofExtra + wallH - 44;
-    g.fillStyle = '#4e3319'; g.fillRect(doorX - 3, doorY - 3, doorW + 6, 47);
-    g.fillStyle = '#7a4a21'; g.fillRect(doorX, doorY, doorW, 44);
-    g.fillStyle = '#96682f';
-    g.fillRect(doorX + 4, doorY + 5, 8, 15); g.fillRect(doorX + doorW - 12, doorY + 5, 8, 15);
-    g.fillRect(doorX + 4, doorY + 25, 8, 14); g.fillRect(doorX + doorW - 12, doorY + 25, 8, 14);
-    g.fillStyle = '#ffd93d'; g.beginPath(); g.arc(doorX + doorW - 6, doorY + 23, 2.4, 0, Math.PI * 2); g.fill();
-    g.fillStyle = '#9aa0a8'; g.fillRect(doorX - 5, roofExtra + wallH - 4, doorW + 10, 4);
-    // keset selamat datang di depan pintu
-    g.fillStyle = '#a03d2d'; g.fillRect(doorX + 3, roofExtra + wallH - 1, doorW - 6, 3.4);
-    g.fillStyle = '#c65a41'; g.fillRect(doorX + 6, roofExtra + wallH - 0.4, doorW - 12, 1.6);
-    // --- jendela dinding ---
-    const winPos = h.w >= 5 ? [W * 0.2, W * 0.8] : h.w >= 3 ? [W * 0.22, W * 0.78] : [W * 0.5];
-    winPos.forEach((wx) => {
-      if (Math.abs(wx - W / 2) < 34) return;
-      // daun jendela (shutter) kayu di kedua sisi
-      g.fillStyle = shade(WALL, 0.62);
-      g.fillRect(wx - 20, roofExtra + 26, 6, 24); g.fillRect(wx + 14, roofExtra + 26, 6, 24);
-      g.fillStyle = shade(WALL, 0.5);
-      g.fillRect(wx - 20, roofExtra + 33, 6, 2); g.fillRect(wx - 20, roofExtra + 41, 6, 2);
-      g.fillRect(wx + 14, roofExtra + 33, 6, 2); g.fillRect(wx + 14, roofExtra + 41, 6, 2);
-      g.fillStyle = '#5d4020'; g.fillRect(wx - 12, roofExtra + 26, 24, 24);
-      const glass = g.createLinearGradient(0, roofExtra + 28, 0, roofExtra + 48);
-      glass.addColorStop(0, '#ffeeb0'); glass.addColorStop(1, '#f5b942');
-      g.fillStyle = glass; g.fillRect(wx - 9, roofExtra + 29, 18, 18);
-      g.fillStyle = '#5d4020';
-      g.fillRect(wx - 1, roofExtra + 29, 2, 18); g.fillRect(wx - 9, roofExtra + 37, 18, 2);
-      g.fillStyle = '#b3392e'; g.fillRect(wx - 13, roofExtra + 50, 26, 5);
-      g.fillStyle = '#ff6b9d'; g.fillRect(wx - 8, roofExtra + 47, 4, 4); g.fillRect(wx + 4, roofExtra + 47, 4, 4);
-    });
-    // --- lentera teras (item toko) ---
-    if (opts.lanterns) {
-      [doorX - 17, doorX + doorW + 10].forEach((lx) => {
-        g.fillStyle = '#3a2c1c'; g.fillRect(lx, doorY + 2, 7, 12);
-        g.fillStyle = '#ffd93d'; g.fillRect(lx + 1.2, doorY + 4.4, 4.6, 6);
-        g.fillStyle = '#fff3b0'; g.fillRect(lx + 2.4, doorY + 6, 2.2, 3);
-        g.fillStyle = '#3a2c1c'; g.fillRect(lx - 0.6, doorY + 0.6, 8.2, 2);
+    // lentera teras (item toko)
+    if (opts.lanterns && geo) {
+      [geo.doorX - 17, geo.doorX + geo.doorW + 10].forEach((lx) => {
+        g.fillStyle = '#3a2c1c'; g.fillRect(lx, geo.doorY + 2, 7, 12);
+        g.fillStyle = '#ffd93d'; g.fillRect(lx + 1.2, geo.doorY + 4.4, 4.6, 6);
+        g.fillStyle = '#fff3b0'; g.fillRect(lx + 2.4, geo.doorY + 6, 2.2, 3);
+        g.fillStyle = '#3a2c1c'; g.fillRect(lx - 0.6, geo.doorY + 0.6, 8.2, 2);
       });
     }
-    // --- tanaman rambat & keranjang bunga (rumah tertentu) ---
-    if (h.label === 'GALERI' || h.label === 'PENGINAPAN') {
-      g.fillStyle = '#46652b';
-      [[8, wallH - 30], [14, wallH - 18], [10, wallH - 8]].forEach((v) => {
-        g.beginPath(); g.arc(v[0] + 4, roofExtra + v[1], 7, 0, Math.PI * 2); g.fill();
-      });
-      g.fillStyle = '#557a35';
-      g.beginPath(); g.arc(14, roofExtra + wallH - 24, 5, 0, Math.PI * 2); g.fill();
-      g.fillStyle = '#ff6b9d';
-      g.fillRect(10, roofExtra + wallH - 32, 3.4, 3.4);
-      g.fillRect(17, roofExtra + wallH - 16, 3.4, 3.4);
-    }
-    if (h.label === 'GALERI') {
-      // keranjang bunga gantung di samping pintu
-      g.fillStyle = '#6b4a2a'; g.fillRect(doorX - 26, doorY + 4, 13, 8);
-      g.fillStyle = '#ff6b9d';
-      g.fillRect(doorX - 24, doorY + 1, 4, 4); g.fillRect(doorX - 18, doorY, 4, 4);
-      g.fillStyle = '#ffd93d'; g.fillRect(doorX - 21, doorY + 2, 3.4, 3.4);
-    }
-    // --- papan nama kayu ---
-    g.font = 'bold 15px "Trebuchet MS", sans-serif';
-    const tw = g.measureText(h.label).width + 22;
-    const px = W / 2 - tw / 2, py = roofExtra + 8;
-    g.fillStyle = '#6b4a2a'; g.fillRect(px - 2, py - 2, tw + 4, 25);
-    g.fillStyle = '#a9743f'; g.fillRect(px, py, tw, 21);
-    g.fillStyle = '#8a5a2b'; g.fillRect(px, py + 16, tw, 5);
-    g.fillStyle = '#fff2cf'; g.textAlign = 'center';
-    g.fillText(h.label, W / 2, py + 15.5);
+    drawPlaque(g, W, geo ? geo.plaqueY : roofExtra + 8, houseLabel(h), geo && geo.darkPlaque);
     return { canvas: c, roofExtra };
   }
   const PLAYER_HOUSE_IDX = HOUSES.findIndex((h) => h.label === 'RUMAH TAMU');
   function buildPlayerHouseSprite() {
     const up = STATE.houseUpgrades;
     return makeHouseSprite(HOUSES[PLAYER_HOUSE_IDX], {
-      wall: up.has('paint') ? '#f7ead0' : undefined,
+      wall: up.has('paint') ? '#d9b47c' : undefined,
       roof: up.has('roof') ? '#8c4a2f' : undefined,
       premium: up.has('roof'),
       shabby: !up.has('paint'),
@@ -474,7 +861,10 @@
       lanterns: up.has('lantern'),
     });
   }
-  const houseSprites = HOUSES.map((h, i) => (i === PLAYER_HOUSE_IDX ? buildPlayerHouseSprite() : makeHouseSprite(h)));
+  function buildHouseSprite(h, i) {
+    return i === PLAYER_HOUSE_IDX ? buildPlayerHouseSprite() : makeHouseSprite(h);
+  }
+  const houseSprites = HOUSES.map(buildHouseSprite);
 
   /* ---------------- Sprite POHON / SEMAK / PAPAN ---------------- */
   function makeTreeSprite(variant) {
@@ -804,29 +1194,30 @@
     if (near.type === 'npc') {
       const o = near.obj, n = o.data;
       faceEachOther(o);
-      openDialog(n.name + ' — ' + n.role, n.pages, NPC_EMOJI[n.id] || '🙂', () => {
+      const title = n.name + ' — ' + (STATE.lang === 'en' ? (ROLE_EN[n.id] || n.role) : n.role);
+      const pages = STATE.lang === 'en' ? (NPC_EN[n.id] || n.pages) : n.pages;
+      openDialog(title, pages, NPC_EMOJI[n.id] || '🙂', () => {
         if (n.counts && !STATE.talked.has(n.id)) {
           STATE.talked.add(n.id);
           STATE.coins += 15;
           persist(); refreshChips();
-          toast('+15 🪙 — Terima kasih sudah mengobrol dengan ' + n.name.split(' ').slice(-1)[0] + '!');
+          toast(L(STR.coinToast)(n.name.split(' ').slice(-1)[0]));
           beep(880, 0.1); setTimeout(() => beep(1174, 0.14), 110);
           const total = NPCS.filter((x) => x.counts).length;
           if (STATE.talked.size >= total) {
-            setTimeout(() => toast('🏆 MISI SELESAI! Kamu sudah mengenal seluruh warga Desa Portofolio!'), 2600);
+            setTimeout(() => toast(L(STR.missionDone)), 2600);
           }
         }
         if (n.action === 'fishing') window.location.href = 'fishing.html';
         if (n.action === 'td') window.location.href = 'td.html';
       });
     } else if (near.type === 'home') {
-      const owned = STATE.houseUpgrades.size;
-      const pages = owned >= 6
-        ? ['Ini Rumah Tamu — tempat tinggalmu selama di desa. Berkat jerih payahmu mengumpulkan koin, rumah ini sekarang jadi yang tercantik di seluruh desa! ⛲🌸', 'Pak Lurah pasti bangga. Terima kasih sudah merawat rumah ini!']
-        : ['Ini Rumah Tamu — tempat tinggalmu selama di desa. Kata Pak Lurah, rumah ini sudah lama kosong... catnya mengelupas, atapnya bertambal di sana-sini.', 'Tapi jangan khawatir! Kumpulkan koin dari mengobrol dengan warga, memancing, dan mempertahankan desa — lalu belanja di Toko Dekorasi untuk mempercantik rumah ini.', 'Saat ini kamu punya ' + owned + ' dari 6 perabotan. Ayo buka katalog tokonya!'];
-      openDialog('Rumah Tamu — Rumahmu di Desa', pages, '🏠', () => openShop());
+      openDialog(L(STR.homeTitle), homePages(), '🏠', () => openShop());
     } else {
-      openDialog(near.obj.name, near.obj.pages, '📜', null);
+      const s = near.obj;
+      const sName = STATE.lang === 'en' ? (SIGN_NAME_EN[s.id] || s.name) : s.name;
+      const sPages = STATE.lang === 'en' ? (SIGN_EN[s.id] || s.pages) : s.pages;
+      openDialog(sName, sPages, '📜', null);
     }
   }
 
@@ -910,12 +1301,12 @@
     if (!collides(tx, ty)) { player.x = tx; player.y = ty; }
     else { player.x = tx; player.y = (o.data.y + 2.15) * TILE; }
     player.dir = 'up';
-    toast('📍 Kamu tiba di dekat ' + o.data.name);
+    toast(L(STR.arrived) + o.data.name);
     beep(740, 0.07);
   }
   document.querySelectorAll('[data-section]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const sec = INFO[btn.getAttribute('data-section')];
+      const sec = (STATE.lang === 'en' ? INFO_EN : INFO)[btn.getAttribute('data-section')];
       if (!sec) return;
       infoTitle.textContent = sec.title;
       infoBody.innerHTML = sec.body;
@@ -949,16 +1340,16 @@
   document.getElementById('btn-tutorial').addEventListener('click', () => {
     tutorialModal.classList.remove('hidden');
   });
-  // Popup pembuka diatur di bagian "Mulai": cerita (pertama kali) -> tutorial (selalu tampil)
+  // Popup pembuka (tutorial) ditampilkan di bagian "Mulai".
 
   /* ---------------- Toko Dekorasi ---------------- */
   const SHOP_ITEMS = [
-    { id: 'paint', icon: '🎨', name: 'Cat Rumah Baru', desc: 'Dinding dicat ulang krem cerah — kesan usang hilang, rumah terasa hidup lagi.', price: 40 },
-    { id: 'roof', icon: '🏠', name: 'Atap Terakota Premium', desc: 'Atap baru warna terakota dengan bubungan berhias dan ornamen emas.', price: 60 },
-    { id: 'garden', icon: '🌸', name: 'Taman Bunga', desc: 'Dua petak bunga warna-warni di halaman depan Rumah Tamu.', price: 30 },
-    { id: 'lantern', icon: '🏮', name: 'Lentera Teras', desc: 'Sepasang lentera hangat di samping pintu — cahayanya terasa sampai jalan desa.', price: 25 },
-    { id: 'fence', icon: '🪵', name: 'Pagar Kayu Halaman', desc: 'Pagar kayu kokoh di kedua ujung halaman depan.', price: 35 },
-    { id: 'fountain', icon: '⛲', name: 'Air Mancur Mini', desc: 'Air mancur batu beranimasi di samping rumah. Tetangga pasti iri!', price: 80 },
+    { id: 'paint', icon: '🎨', price: 40, name: { en: 'Fresh House Paint', id: 'Cat Rumah Baru' }, desc: { en: 'Walls repainted in bright cream — the shabby look is gone, the house feels alive again.', id: 'Dinding dicat ulang krem cerah — kesan usang hilang, rumah terasa hidup lagi.' } },
+    { id: 'roof', icon: '🏠', price: 60, name: { en: 'Premium Terracotta Roof', id: 'Atap Terakota Premium' }, desc: { en: 'A new terracotta roof with a decorated ridge and golden ornaments.', id: 'Atap baru warna terakota dengan bubungan berhias dan ornamen emas.' } },
+    { id: 'garden', icon: '🌸', price: 30, name: { en: 'Flower Garden', id: 'Taman Bunga' }, desc: { en: 'Two colorful flower beds in the Guest House front yard.', id: 'Dua petak bunga warna-warni di halaman depan Rumah Tamu.' } },
+    { id: 'lantern', icon: '🏮', price: 25, name: { en: 'Porch Lanterns', id: 'Lentera Teras' }, desc: { en: 'A pair of warm lanterns beside the door — their glow reaches the village road.', id: 'Sepasang lentera hangat di samping pintu — cahayanya terasa sampai jalan desa.' } },
+    { id: 'fence', icon: '🪵', price: 35, name: { en: 'Wooden Yard Fence', id: 'Pagar Kayu Halaman' }, desc: { en: 'A sturdy wooden fence at both ends of the front yard.', id: 'Pagar kayu kokoh di kedua ujung halaman depan.' } },
+    { id: 'fountain', icon: '⛲', price: 80, name: { en: 'Mini Fountain', id: 'Air Mancur Mini' }, desc: { en: 'An animated stone fountain beside the house. The neighbors will be jealous!', id: 'Air mancur batu beranimasi di samping rumah. Tetangga pasti iri!' } },
   ];
   const shopModal = document.getElementById('shop-modal');
   const shopItemsEl = document.getElementById('shop-items');
@@ -970,10 +1361,10 @@
       const afford = STATE.coins >= it.price;
       return '<div class="shop-item' + (owned ? ' owned' : '') + '">' +
         '<div class="ic">' + it.icon + '</div>' +
-        '<div class="inf"><b>' + it.name + '</b><span>' + it.desc + '</span></div>' +
+        '<div class="inf"><b>' + L(it.name) + '</b><span>' + L(it.desc) + '</span></div>' +
         '<div class="buy">' + (owned
-          ? '<span class="owned-label">✓ Dimiliki</span>'
-          : '<span class="price">🪙 ' + it.price + '</span><button class="px-btn' + (afford ? ' primary' : '') + '" data-buy="' + it.id + '"' + (afford ? '' : ' disabled') + '>Beli</button>') +
+          ? '<span class="owned-label">' + L(STR.owned) + '</span>'
+          : '<span class="price">🪙 ' + it.price + '</span><button class="px-btn' + (afford ? ' primary' : '') + '" data-buy="' + it.id + '"' + (afford ? '' : ' disabled') + '>' + L(STR.buy) + '</button>') +
         '</div></div>';
     }).join('');
     shopItemsEl.querySelectorAll('[data-buy]').forEach((b) => {
@@ -991,7 +1382,7 @@
     }
     refreshDynColliders();
     renderShop();
-    toast('🎉 ' + it.name + ' terpasang di Rumah Tamu!');
+    toast(L(STR.bought)(L(it.name)));
     beep(784, 0.09); setTimeout(() => beep(988, 0.09), 90); setTimeout(() => beep(1318, 0.16), 180);
   }
   function openShop() { renderShop(); shopModal.classList.remove('hidden'); }
@@ -1002,82 +1393,10 @@
   });
   shopModal.addEventListener('click', (e) => { if (e.target === shopModal) closeShop(); });
 
-  /* ---------------- Cerita (story telling) ---------------- */
-  const STORY = [
-    { emoji: '📜', title: 'Bab 1 — Sebuah Surat', text: 'Suatu sore, sepucuk surat tiba di rumahmu. Pengirimnya: Pak Lurah Wiryo dari sebuah desa kecil yang jauh — Desa Portofolio. "Datanglah," tulisnya. "Desa kami menyimpan kisah seorang pemuda pembangun. Kami membutuhkan seorang saksi untuk mendengarnya langsung."' },
-    { emoji: '🌅', title: 'Bab 2 — Perjalanan', text: 'Kau berkemas dan berjalan melewati hutan dan ladang, mengikuti peta lusuh yang terselip di dalam surat. Saat matahari condong ke barat, gerbang kayu desa akhirnya terlihat — dengan papan besar bertuliskan: 🌻 DESA PORTOFOLIO 🌻.' },
-    { emoji: '👴', title: 'Bab 3 — Sambutan Pak Lurah', text: '"Selamat datang, Anak muda!" sambut Pak Lurah di balai desa. "Desa ini dibangun oleh Rama Hadi Nugraha. Setiap warga di sini memegang satu keping kisahnya — proyek, keahlian, dan pengalamannya. Ajaklah mereka bicara satu per satu, dan kau akan mengenal siapa Rama sebenarnya."' },
-    { emoji: '🏚️', title: 'Bab 4 — Rumah Tamu yang Usang', text: 'Pak Lurah mengantarmu ke Rumah Tamu di tenggara desa — tempat tinggalmu selama di sini. Rumah itu tua: catnya mengelupas, atapnya bertambal. "Rawatlah sesukamu," kata beliau sambil tersenyum. "Kumpulkan koin dari warga dan dari mini game, lalu belanja di Toko Dekorasi. Jadikan rumah itu bukti perjalananmu di desa kami."' },
-    { emoji: '🎮', title: 'Bab 5 — Petualangan Dimulai!', text: 'Bergeraklah dengan WASD / tombol panah (di HP: D-pad di layar). Tekan E untuk bicara dengan warga bertanda "!". Mampirlah ke Kakek Tirta untuk memancing 🎣, dan bantu Sersan Garda mempertahankan desa 🏰. Navbar di bagian atas layar adalah teman perjalananmu. Selamat menjelajah, Saksi Desa!' },
-  ];
-  const storyModal = document.getElementById('story-modal');
-  const storyEmoji = document.getElementById('story-emoji');
-  const storyTitle = document.getElementById('story-title');
-  const storyText = document.getElementById('story-text');
-  const storyDots = document.getElementById('story-dots');
-  const storyNext = document.getElementById('story-next');
-  let story = null;
-  let storyAuto = false; // true bila cerita tampil otomatis saat halaman dibuka
-  function storyStep() {
-    if (!story) return;
-    const page = STORY[story.idx];
-    storyEmoji.textContent = page.emoji;
-    storyTitle.textContent = page.title;
-    storyDots.innerHTML = STORY.map((_, i) => '<span class="' + (i === story.idx ? 'on' : '') + '">●</span>').join('');
-    storyNext.textContent = story.idx >= STORY.length - 1 ? 'MULAI PETUALANGAN ▶' : 'Lanjut ▶';
-    story.chars = 0;
-    storyText.textContent = '';
-    clearInterval(story.timer);
-    story.timer = setInterval(() => {
-      if (!story) return;
-      story.chars++;
-      storyText.textContent = page.text.slice(0, story.chars);
-      if (story.chars >= page.text.length) clearInterval(story.timer);
-    }, 14);
-  }
-  function finishStory() {
-    if (story) clearInterval(story.timer);
-    story = null;
-    storyModal.classList.add('hidden');
-    if (window.DesaSave) {
-      const d = DesaSave.load();
-      d.seenStory = true;
-      DesaSave.save(d);
-    }
-    beep(659, 0.09); setTimeout(() => beep(880, 0.12), 100);
-    // Setelah cerita pembuka selesai, lanjutkan ke popup tutorial
-    if (storyAuto) {
-      storyAuto = false;
-      tutorialModal.classList.remove('hidden');
-    }
-  }
-  function storyAdvance() {
-    if (!story) return;
-    const page = STORY[story.idx];
-    if (story.chars < page.text.length) {
-      clearInterval(story.timer);
-      story.chars = page.text.length;
-      storyText.textContent = page.text;
-      return;
-    }
-    beep(520, 0.05);
-    story.idx++;
-    if (story.idx >= STORY.length) finishStory();
-    else storyStep();
-  }
-  function showStory() {
-    story = { idx: 0, chars: 0, timer: null };
-    storyModal.classList.remove('hidden');
-    storyStep();
-  }
-  storyNext.addEventListener('click', storyAdvance);
-  document.getElementById('story-skip').addEventListener('click', finishStory);
-  document.getElementById('btn-story').addEventListener('click', showStory);
-
   /* ---------------- Asap cerobong ---------------- */
   const smoke = [];
   let smokeTimer = 0;
-  const CHIMNEYS = [{ x: 723, y: -2 }, { x: 133, y: 46 }]; // Balai Desa & Pandai Besi
+  const CHIMNEYS = [{ x: 721, y: -11 }, { x: 128, y: 63 }]; // Balai Desa (medieval) & Pandai Besi (pipa)
 
   /* ---------------- Partikel daun gugur ---------------- */
   const pollen = [];
@@ -1396,9 +1715,9 @@
   function update(now) {
     const dt = Math.min(0.05, (now - lastTime) / 1000);
     lastTime = now;
-    const uiBusy = dialog || story ||
+    const uiBusy = dialog ||
       !infoModal.classList.contains('hidden') || !tutorialModal.classList.contains('hidden') ||
-      !shopModal.classList.contains('hidden') || !storyModal.classList.contains('hidden');
+      !shopModal.classList.contains('hidden');
     let dx = 0, dy = 0;
     if (!uiBusy) {
       if (keys['ArrowLeft'] || keys['KeyA'] || touch.left) dx = -1;
@@ -1424,8 +1743,10 @@
     if (!dialog) {
       const near = nearestInteractable();
       if (near) {
-        const name = near.type === 'npc' ? near.obj.data.name : near.type === 'home' ? 'Rumah Tamu — Toko Dekorasi' : near.obj.name;
-        promptEl.innerHTML = 'Tekan <b>E</b> / BICARA — ' + name;
+        const name = near.type === 'npc' ? near.obj.data.name
+          : near.type === 'home' ? L(STR.homePrompt)
+          : (STATE.lang === 'en' ? (SIGN_NAME_EN[near.obj.id] || near.obj.name) : near.obj.name);
+        promptEl.innerHTML = L(STR.prompt) + name;
         promptEl.classList.remove('hidden');
       } else {
         promptEl.classList.add('hidden');
@@ -1461,13 +1782,8 @@
   refreshChips();
   window.__desaReady = true;
   document.getElementById('loading').classList.add('hidden');
-  // Popup pembuka: kunjungan pertama -> cerita dulu, lalu tutorial.
-  // Kunjungan berikutnya -> tutorial langsung tampil (seperti versi awal).
-  if (!save0.seenStory) {
-    storyAuto = true;
-    showStory();
-  } else {
-    tutorialModal.classList.remove('hidden');
-  }
+  // Terapkan bahasa terpilih (default: English) lalu tampilkan popup pembuka.
+  applyLang();
+  tutorialModal.classList.remove('hidden');
   requestAnimationFrame(update);
 })();

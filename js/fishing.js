@@ -34,16 +34,36 @@
   }
 
   const FISH = [
-    { name: 'Ikan Mujair', emoji: '🐟', weight: 34, pts: 10 },
-    { name: 'Ikan Mas', emoji: '🐠', weight: 28, pts: 15 },
-    { name: 'Ikan Lele', emoji: '🐡', weight: 20, pts: 20 },
-    { name: 'Ikan Gurame', emoji: '🐟', weight: 11, pts: 30 },
-    { name: 'Ikan Koi Emas', emoji: '✨🐠', weight: 4, pts: 50 },
-    { name: 'Sepatu Tua', emoji: '👞', weight: 3, pts: 1 },
+    { name: 'Ikan Mujair', en: 'Tilapia', emoji: '🐟', weight: 34, pts: 10 },
+    { name: 'Ikan Mas', en: 'Carp', emoji: '🐠', weight: 28, pts: 15 },
+    { name: 'Ikan Lele', en: 'Catfish', emoji: '🐡', weight: 20, pts: 20 },
+    { name: 'Ikan Gurame', en: 'Gourami', emoji: '🐟', weight: 11, pts: 30 },
+    { name: 'Ikan Koi Emas', en: 'Golden Koi', emoji: '✨🐠', weight: 4, pts: 50 },
+    { name: 'Sepatu Tua', en: 'Old Boot', emoji: '👞', weight: 3, pts: 1 },
   ];
 
   /* --- progres tersimpan --- */
   const save = window.DesaSave ? DesaSave.load() : { collection: {}, fishScore: 0, fish: 0 };
+
+  /* --- bahasa (mengikuti pilihan di halaman utama) --- */
+  const LANG = save.lang || 'en';
+  const S = {
+    empty: { en: 'Still empty — catch your first fish!', id: 'Masih kosong — ayo tangkap ikan pertamamu!' },
+    bite: { en: 'FISH BITING! REEL NOW! 🐟', id: 'IKAN MENGGIGIT! TARIK SEKARANG! 🐟' },
+    reel: { en: 'REEL! 🎣', id: 'TARIK! 🎣' },
+    escaped: { en: 'Aw, the fish got away... Cast again, stay patient!', id: 'Yah, ikannya kabur... Coba lempar lagi, tetap sabar!' },
+    cast: { en: 'CAST 🎣', id: 'LEMPAR 🎣' },
+    casting: { en: 'Line cast... wait for the "!" mark, then reel fast!', id: 'Kail dilempar... tunggu sampai ada tanda "!" lalu tarik cepat!' },
+    waiting: { en: 'WAITING...', id: 'MENUNGGU...' },
+    boot: { en: 'Huh, an old boot came up instead?! Keep it as a souvenir. 😅', id: 'Lho, yang naik malah sepatu tua?! Simpan saja untuk kenang-kenangan. 😅' },
+    koi: { en: 'INCREDIBLE! You caught the legendary Golden Koi! ✨', id: 'LUAR BIASA! Kamu menangkap Ikan Koi Emas yang legendaris! ✨' },
+    got: { en: (n, p) => 'Got it! ' + n + ' (' + p + ' pts). Cast again?', id: (n, p) => 'Dapat! ' + n + ' (' + p + ' poin). Lempar lagi?' },
+    again: { en: 'CAST AGAIN 🎣', id: 'LEMPAR LAGI 🎣' },
+    patience: { en: 'Patience... no bite yet. Wait for the "!" mark!', id: 'Sabar... belum ada gigitan. Tunggu tanda "!" muncul!' },
+    pts: { en: ' pts!', id: ' poin!' },
+  };
+  function t2(o) { return o[LANG] !== undefined ? o[LANG] : o.en; }
+  function fishName(f) { return LANG === 'en' ? f.en : f.name; }
   const collection = save.collection || {};
   let totalScore = save.fishScore || 0;
 
@@ -62,11 +82,11 @@
   function renderCollection() {
     const parts = Object.keys(collection).map(function (k) {
       const f = FISH.find(function (x) { return x.name === k; });
-      return f.emoji + ' ' + k + ' ×' + collection[k];
+      return f.emoji + ' ' + fishName(f) + ' ×' + collection[k];
     });
     collectionEl.textContent = parts.length
       ? parts.join('  ·  ')
-      : 'Masih kosong — ayo tangkap ikan pertamamu!';
+      : t2(S.empty);
     totalEl.textContent = totalFish();
     scoreEl.textContent = totalScore;
   }
@@ -244,7 +264,7 @@
       }
       g.font = 'bold 21px sans-serif';
       g.lineWidth = 6; g.strokeStyle = 'rgba(0,0,0,.5)';
-      const label = lastCatch.name + '  +' + lastCatch.pts + ' poin!';
+      const label = fishName(lastCatch) + '  +' + lastCatch.pts + t2(S.pts);
       g.strokeText(label, W / 2 + 60, cy + 34);
       g.fillStyle = '#fff'; g.fillText(label, W / 2 + 60, cy + 34);
     }
@@ -277,13 +297,13 @@
     if (state === 'waiting' && t >= biteAt) {
       state = 'bite';
       biteDeadline = t + 780;
-      status.textContent = 'IKAN MENGGIGIT! TARIK SEKARANG! 🐟';
-      btn.textContent = 'TARIK! 🎣';
+      status.textContent = t2(S.bite);
+      btn.textContent = t2(S.reel);
       beep(980, 0.09); setTimeout(function () { beep(1180, 0.1); }, 90);
     } else if (state === 'bite' && t > biteDeadline) {
       state = 'ready';
-      status.textContent = 'Yah, ikannya kabur... Coba lempar lagi, tetap sabar!';
-      btn.textContent = 'LEMPAR 🎣';
+      status.textContent = t2(S.escaped);
+      btn.textContent = t2(S.cast);
       lastCatch = null;
     }
     requestAnimationFrame(loop);
@@ -296,8 +316,8 @@
       lastCatch = null;
       bobberX = 250 + Math.random() * 300;
       biteAt = now + 1300 + Math.random() * 2400;
-      status.textContent = 'Kail dilempar... tunggu sampai ada tanda "!" lalu tarik cepat!';
-      btn.textContent = 'MENUNGGU...';
+      status.textContent = t2(S.casting);
+      btn.textContent = t2(S.waiting);
       splash(bobberX, WATER_Y + 26, 7, ['#bfe3ff', '#ffffff']);
       beep(420, 0.06, 'sine', 0.05);
     } else if (state === 'bite') {
@@ -307,11 +327,11 @@
       lastCatch = fish;
       state = 'done';
       status.textContent = fish.name === 'Sepatu Tua'
-        ? 'Lho, yang naik malah sepatu tua?! Simpan saja untuk kenang-kenangan. 😅'
+        ? t2(S.boot)
         : fish.name === 'Ikan Koi Emas'
-          ? 'LUAR BIASA! Kamu menangkap Ikan Koi Emas yang legendaris! ✨'
-          : 'Dapat! ' + fish.name + ' (' + fish.pts + ' poin). Lempar lagi?';
-      btn.textContent = 'LEMPAR LAGI 🎣';
+          ? t2(S.koi)
+          : t2(S.got)(fishName(fish), fish.pts);
+      btn.textContent = t2(S.again);
       splash(bobberX, WATER_Y + 24, 16, ['#bfe3ff', '#ffffff', '#ffd93d']);
       // Poin ikan menjadi koin desa (terlihat di navbar halaman utama)
       if (window.DesaSave) {
@@ -323,7 +343,7 @@
       renderCollection();
       beep(784, 0.1); setTimeout(function () { beep(1046, 0.14); }, 110);
     } else if (state === 'waiting') {
-      status.textContent = 'Sabar... belum ada gigitan. Tunggu tanda "!" muncul!';
+      status.textContent = t2(S.patience);
     }
   }
 

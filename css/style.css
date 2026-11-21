@@ -383,7 +383,15 @@ body.game-full #touch-controls {
 #loading-error .px-btn.link { text-decoration: none; color: var(--ink); display: inline-block; margin: 4px 3px; }
 #loading-error.hidden { display: none; }
 
-/* ===== Modal cerita ===== */
+/* ===== Pilihan bahasa di popup ===== */
+.lang-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 10px; font-size: 13.5px; font-weight: 700;
+}
+.lang-opt { padding: 6px 12px; font-size: 13px; opacity: .55; }
+.lang-opt.active { opacity: 1; outline: 3px solid #ffd93d; }
+
+/* ===== Modal cerita (arsip) ===== */
 .overlay.story {
   background: linear-gradient(180deg, rgba(24,20,38,.93), rgba(43,32,18,.95));
 }

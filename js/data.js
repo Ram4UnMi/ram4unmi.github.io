@@ -5,15 +5,16 @@
    Koordinat memakai satuan TILE (1 tile = 32px). Peta: 26 x 19.
    ============================================================ */
 
-// Bangunan desa: x, y, w, h dalam tile + label + warna atap
+// Bangunan desa: x, y, w, h dalam tile + label + warna + gaya arsitektur
+// style: 'medieval' (Eropa) | 'eastasia' (Asia Timur) | 'mideast' (Timur Tengah) | 'seasia' (Asia Tenggara)
 const HOUSES = [
-  { x: 10, y: 1, w: 6, h: 3, label: 'BALAI DESA', roof: '#54687c', wall: '#f3e2b8' },
-  { x: 2,  y: 2, w: 4, h: 3, label: 'PANDAI BESI', roof: '#5b6770', wall: '#e8d8c0' },
-  { x: 20, y: 2, w: 4, h: 3, label: 'ARENA', roof: '#5d4a72', wall: '#e6ddf2' },
-  { x: 2,  y: 7, w: 4, h: 3, label: 'GALERI', roof: '#4f6f8f', wall: '#dcebfb' },
-  { x: 20, y: 12, w: 4, h: 3, label: 'PENGINAPAN', roof: '#5c7350', wall: '#e2f2df' },
-  { x: 8,  y: 15, w: 4, h: 3, label: 'KANTOR POS', roof: '#b85c33', wall: '#fdeadd' },
-  { x: 19, y: 15, w: 3, h: 2, label: 'RUMAH TAMU', roof: '#6e5a44', wall: '#ddd2b8' },
+  { x: 10, y: 1, w: 6, h: 3, label: 'BALAI DESA', roof: '#54687c', wall: '#e8e0cc', style: 'medieval' },
+  { x: 2,  y: 2, w: 4, h: 3, label: 'PANDAI BESI', roof: '#b08954', wall: '#e3cfa3', style: 'mideast' },
+  { x: 20, y: 2, w: 4, h: 3, label: 'ARENA', roof: '#4a4f57', wall: '#f2ede2', style: 'eastasia' },
+  { x: 2,  y: 7, w: 4, h: 3, label: 'GALERI', roof: '#8a6a42', wall: '#a9743f', style: 'seasia' },
+  { x: 20, y: 12, w: 4, h: 3, label: 'PENGINAPAN', roof: '#7a4a35', wall: '#f2ede2', style: 'eastasia' },
+  { x: 8,  y: 15, w: 4, h: 3, label: 'KANTOR POS', roof: '#9c4030', wall: '#efe3ce', style: 'medieval' },
+  { x: 19, y: 15, w: 3, h: 2, label: 'RUMAH TAMU', roof: '#6e5a44', wall: '#b98a58', style: 'seasia' },
 ];
 
 // Pohon dekorasi (tile x, y)

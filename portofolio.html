@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portofolio — Rama Hadi Nugraha</title>
-<meta name="description" content="Portofolio Rama Hadi Nugraha: UI/UX & Mobile Developer, Visual Designer, Applied AI Research.">
+<title>Portfolio — Rama Hadi Nugraha</title>
+<meta name="description" content="Portfolio of Rama Hadi Nugraha: UI/UX & Mobile Developer, Visual Designer, Applied AI Research.">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%232e6fd8'/><rect x='3' y='4' width='10' height='8' fill='%23fff8e7'/></svg>">
 <style>
@@ -43,9 +43,10 @@
 <body>
 
 <div class="back-bar">
-  <a class="px-btn" href="index.html">🏡 Kembali ke Desa</a>
-  <a class="px-btn" href="fishing.html">🎣 Mancing</a>
+  <a class="px-btn" href="index.html" data-i18n="backVillage">🏡 Back to the Village</a>
+  <a class="px-btn" href="fishing.html" data-i18n="backFish">🎣 Fishing</a>
   <a class="px-btn" href="td.html">🏰 Tower Defense</a>
+  <button class="px-btn" id="pf-lang" type="button">🌐 EN</button>
 </div>
 
 <main class="pf-wrap">
@@ -53,64 +54,64 @@
     <div class="avatar">🧑‍💻</div>
     <h1>Rama Hadi Nugraha</h1>
     <div class="role">UI/UX &amp; Mobile Developer · Visual Designer · Applied AI Research</div>
-    <p class="desc">Lulusan S1 Teknik Informatika, Universitas Komputer Indonesia (2022–2026) dengan IPK 3,80. Berpengalaman membangun aplikasi Flutter end-to-end, merancang pengalaman pengguna, membuat konten visual untuk banyak akun, dan meneliti computer vision hingga tingkat internasional.</p>
+    <p class="desc" data-i18n="heroDesc">Bachelor's in Informatics Engineering, Universitas Komputer Indonesia (2022–2026), GPA 3.80. Experienced in building end-to-end Flutter apps, designing user experiences, creating visual content for many accounts, and researching computer vision at an international level.</p>
     <div class="pf-cta">
-      <a class="px-btn primary" href="mailto:nramahadi1@gmail.com">✉️ Hubungi Saya</a>
+      <a class="px-btn primary" href="mailto:nramahadi1@gmail.com" data-i18n="ctaContact">✉️ Contact Me</a>
       <a class="px-btn" href="https://www.linkedin.com/in/rama-hadi-nugraha" target="_blank" rel="noopener">💼 LinkedIn</a>
       <a class="px-btn" href="https://github.com/Ram4UnMi" target="_blank" rel="noopener">🐙 GitHub</a>
-      <a class="px-btn" href="index.html">🎮 Main ke Desa Portofolio</a>
+      <a class="px-btn" href="index.html" data-i18n="ctaVisit">🎮 Visit Portfolio Village</a>
     </div>
   </section>
 
   <section class="pf-section">
-    <h2>🚀 Proyek</h2>
+    <h2 data-i18n="secProjects">🚀 Projects</h2>
     <div class="cards">
       <article class="card">
-        <h4>Aplikasi Tiket Wisata — Disparbud Majalengka</h4>
-        <p>UI/UX end-to-end dan pengembangan Flutter (web &amp; Android) untuk aplikasi pemesanan tiket wisata; diuji 200+ pengguna, fitur scan QR Flutter mempercepat validasi tiket 40%. Sekaligus merancang logo &amp; branding.</p>
+        <h4 data-i18n="p1t">Tourism Ticket App — Disparbud Majalengka</h4>
+        <p data-i18n="p1d">End-to-end UI/UX and Flutter development (web &amp; Android) for a tourism ticket booking app; tested by 200+ users, and the Flutter QR scan feature sped up ticket validation by 40%. Also designed the logo &amp; branding.</p>
         <p class="tags">Flutter · UI/UX · Figma</p>
       </article>
       <article class="card">
-        <h4>Japanese Waste Detection — Riset JAIST</h4>
-        <p>Deteksi objek sampah dengan YOLOv8 dan backend FastAPI (REST API, SQLite/SQLAlchemy). Di JAIST: eksperimen 8 konfigurasi deteksi objek, pipeline PCA/UMAP/Isolation Forest, analisis LMM/GEE &amp; Association Rule Mining atas 1.150 prediksi.</p>
-        <p class="tags">YOLOv8 · FastAPI · Python · Riset AI</p>
+        <h4 data-i18n="p2t">Japanese Waste Detection — JAIST Research</h4>
+        <p data-i18n="p2d">Waste object detection with YOLOv8 and a FastAPI backend (REST API, SQLite/SQLAlchemy). At JAIST: experiments on 8 object-detection configurations, a PCA/UMAP/Isolation Forest pipeline, and LMM/GEE analysis &amp; Association Rule Mining over 1,150 predictions.</p>
+        <p class="tags">YOLOv8 · FastAPI · Python · AI Research</p>
       </article>
       <article class="card">
         <h4>Blockchain B2B Product Reservation DApp</h4>
-        <p>Aplikasi terdesentralisasi reservasi produk B2B: smart contract Solidity di Ethereum Sepolia, frontend React + MetaMask.</p>
+        <p data-i18n="p3d">A decentralized B2B product reservation app: Solidity smart contracts on Ethereum Sepolia, React + MetaMask frontend.</p>
         <p class="tags">Solidity · Ethereum · React · Web3</p>
       </article>
       <article class="card">
-        <h4>TaniXplore — Platform Pertanian</h4>
-        <p>Platform eksplorasi pertanian terintegrasi Maps API (2024).</p>
+        <h4 data-i18n="p4t">TaniXplore — Agriculture Platform</h4>
+        <p data-i18n="p4d">An agriculture exploration platform integrated with the Maps API (2024).</p>
         <p class="tags">Maps API · Web</p>
       </article>
       <article class="card">
-        <h4>Desain Konten — Laznas PYI</h4>
-        <p>Visual Designer: konten untuk 8 akun Instagram (insight 65/22/12), rata-rata +20 pengikut per akun per bulan.</p>
-        <p class="tags">Photoshop · Illustrator · Desain Visual</p>
+        <h4 data-i18n="p5t">Content Design — Laznas PYI</h4>
+        <p data-i18n="p5d">Visual Designer: content for 8 Instagram accounts (insight split 65/22/12), averaging +20 followers per account per month.</p>
+        <p class="tags" data-i18n="p5tags">Photoshop · Illustrator · Visual Design</p>
       </article>
       <article class="card">
-        <h4>Proyek Lainnya</h4>
-        <p>Smart Door Notification berbasis IoT (2025) dan Anime Face Recognition (2025).</p>
+        <h4 data-i18n="p6t">Other Projects</h4>
+        <p data-i18n="p6d">IoT-based Smart Door Notification (2025) and Anime Face Recognition (2025).</p>
         <p class="tags">IoT · Computer Vision</p>
       </article>
     </div>
   </section>
 
   <section class="pf-section">
-    <h2>💼 Pengalaman</h2>
+    <h2 data-i18n="secExp">💼 Experience</h2>
     <ul>
-      <li><b>Research Intern — JAIST</b> (Jul–Sep 2026): Computer Vision &amp; Reliability Analysis.</li>
-      <li><b>Visual Designer — Laznas PYI</b> (Feb–Mar 2026).</li>
-      <li><b>UI/UX &amp; Flutter Developer Intern — Dinas Pariwisata dan Kebudayaan Majalengka</b> (Agu–Okt 2025).</li>
-      <li><b>Divisi Dekomedia — UKM Fotografi Glosarium UNIKOM</b> (Des 2023–Des 2024): konten visual &amp; dokumentasi acara kampus, engagement +25%.</li>
+      <li data-i18n="e1"><b>Research Intern — JAIST</b> (Jul–Sep 2026): Computer Vision &amp; Reliability Analysis.</li>
+      <li data-i18n="e2"><b>Visual Designer — Laznas PYI</b> (Feb–Mar 2026).</li>
+      <li data-i18n="e3"><b>UI/UX &amp; Flutter Developer Intern — Majalengka Tourism and Culture Office</b> (Aug–Oct 2025).</li>
+      <li data-i18n="e4"><b>Media Division — Glosarium Photography Club, UNIKOM</b> (Dec 2023–Dec 2024): visual content &amp; campus event documentation, engagement +25%.</li>
     </ul>
   </section>
 
   <section class="pf-section">
-    <h2>🛠️ Keahlian</h2>
-    <p><b>Pemrograman &amp; Framework</b></p>
+    <h2 data-i18n="secSkills">🛠️ Skills</h2>
+    <p><b data-i18n="sk1">Programming &amp; Frameworks</b></p>
     <div class="chips">
       <span class="skill-chip">Flutter</span><span class="skill-chip">Python / FastAPI</span><span class="skill-chip">PHP</span><span class="skill-chip">JavaScript</span><span class="skill-chip">HTML/CSS</span><span class="skill-chip">C# / Unity</span><span class="skill-chip">Solidity</span>
     </div>
@@ -118,35 +119,74 @@
     <div class="chips">
       <span class="skill-chip">YOLOv8</span><span class="skill-chip">SQLite</span><span class="skill-chip">SQLAlchemy</span><span class="skill-chip">Hadoop</span><span class="skill-chip">PCA / UMAP</span><span class="skill-chip">Isolation Forest</span><span class="skill-chip">LMM / GEE</span><span class="skill-chip">Vuforia AR</span>
     </div>
-    <p style="margin-top:12px"><b>Desain</b></p>
+    <p style="margin-top:12px"><b data-i18n="sk3">Design</b></p>
     <div class="chips">
       <span class="skill-chip">Figma</span><span class="skill-chip">Photoshop</span><span class="skill-chip">Illustrator</span><span class="skill-chip">Premiere Pro</span><span class="skill-chip">After Effects</span><span class="skill-chip">Lightroom</span>
     </div>
   </section>
 
   <section class="pf-section">
-    <h2>🎓 Pendidikan &amp; Sertifikasi</h2>
+    <h2 data-i18n="secEdu">🎓 Education &amp; Certifications</h2>
     <ul>
-      <li><b>S1 Teknik Informatika</b> — Universitas Komputer Indonesia (2022–2026), IPK 3,80.</li>
-      <li><b>BNSP Data Analis</b> — LSP Informatika.</li>
-      <li><b>BNSP Desain Grafis Muda</b> — LKP DITEKINDO &amp; DISPORA Jawa Barat.</li>
+      <li data-i18n="ed1"><b>Bachelor's in Informatics Engineering</b> — Universitas Komputer Indonesia (2022–2026), GPA 3.80.</li>
+      <li data-i18n="ed2"><b>BNSP Data Analyst</b> — LSP Informatika.</li>
+      <li data-i18n="ed3"><b>BNSP Junior Graphic Design</b> — LKP DITEKINDO &amp; West Java DISPORA.</li>
     </ul>
   </section>
 
   <section class="pf-section">
-    <h2>✉️ Kontak</h2>
+    <h2 data-i18n="secContact">✉️ Contact</h2>
     <p>
       Email: <a href="mailto:nramahadi1@gmail.com">nramahadi1@gmail.com</a><br>
       LinkedIn: <a href="https://www.linkedin.com/in/rama-hadi-nugraha" target="_blank" rel="noopener">linkedin.com/in/rama-hadi-nugraha</a><br>
       GitHub: <a href="https://github.com/Ram4UnMi" target="_blank" rel="noopener">github.com/Ram4UnMi</a>
     </p>
-    <p style="margin-top:8px">Terbuka untuk peluang UI/UX, Mobile Development (Flutter), dan Desain Visual.</p>
+    <p style="margin-top:8px" data-i18n="cOpen">Open to opportunities in UI/UX, Mobile Development (Flutter), and Visual Design.</p>
   </section>
 </main>
 
 <footer>
-  <p>© 2026 Rama Hadi Nugraha — Versi teks dari Desa Portofolio.</p>
+  <p data-i18n="footer">© 2026 Rama Hadi Nugraha — Text version of Portfolio Village.</p>
 </footer>
 
+<script src="js/storage.js"></script>
+<script>
+  window.PAGE_I18N = {
+    backVillage: { en: '🏡 Back to the Village', id: '🏡 Kembali ke Desa' },
+    backFish: { en: '🎣 Fishing', id: '🎣 Mancing' },
+    heroDesc: { en: "Bachelor's in Informatics Engineering, Universitas Komputer Indonesia (2022–2026), GPA 3.80. Experienced in building end-to-end Flutter apps, designing user experiences, creating visual content for many accounts, and researching computer vision at an international level.", id: 'Lulusan S1 Teknik Informatika, Universitas Komputer Indonesia (2022–2026) dengan IPK 3,80. Berpengalaman membangun aplikasi Flutter end-to-end, merancang pengalaman pengguna, membuat konten visual untuk banyak akun, dan meneliti computer vision hingga tingkat internasional.' },
+    ctaContact: { en: '✉️ Contact Me', id: '✉️ Hubungi Saya' },
+    ctaVisit: { en: '🎮 Visit Portfolio Village', id: '🎮 Main ke Desa Portofolio' },
+    secProjects: { en: '🚀 Projects', id: '🚀 Proyek' },
+    p1t: { en: 'Tourism Ticket App — Disparbud Majalengka', id: 'Aplikasi Tiket Wisata — Disparbud Majalengka' },
+    p1d: { en: 'End-to-end UI/UX and Flutter development (web &amp; Android) for a tourism ticket booking app; tested by 200+ users, and the Flutter QR scan feature sped up ticket validation by 40%. Also designed the logo &amp; branding.', id: 'UI/UX end-to-end dan pengembangan Flutter (web &amp; Android) untuk aplikasi pemesanan tiket wisata; diuji 200+ pengguna, fitur scan QR Flutter mempercepat validasi tiket 40%. Sekaligus merancang logo &amp; branding.' },
+    p2t: { en: 'Japanese Waste Detection — JAIST Research', id: 'Japanese Waste Detection — Riset JAIST' },
+    p2d: { en: 'Waste object detection with YOLOv8 and a FastAPI backend (REST API, SQLite/SQLAlchemy). At JAIST: experiments on 8 object-detection configurations, a PCA/UMAP/Isolation Forest pipeline, and LMM/GEE analysis &amp; Association Rule Mining over 1,150 predictions.', id: 'Deteksi objek sampah dengan YOLOv8 dan backend FastAPI (REST API, SQLite/SQLAlchemy). Di JAIST: eksperimen 8 konfigurasi deteksi objek, pipeline PCA/UMAP/Isolation Forest, analisis LMM/GEE &amp; Association Rule Mining atas 1.150 prediksi.' },
+    p3d: { en: 'A decentralized B2B product reservation app: Solidity smart contracts on Ethereum Sepolia, React + MetaMask frontend.', id: 'Aplikasi terdesentralisasi reservasi produk B2B: smart contract Solidity di Ethereum Sepolia, frontend React + MetaMask.' },
+    p4t: { en: 'TaniXplore — Agriculture Platform', id: 'TaniXplore — Platform Pertanian' },
+    p4d: { en: 'An agriculture exploration platform integrated with the Maps API (2024).', id: 'Platform eksplorasi pertanian terintegrasi Maps API (2024).' },
+    p5t: { en: 'Content Design — Laznas PYI', id: 'Desain Konten — Laznas PYI' },
+    p5d: { en: 'Visual Designer: content for 8 Instagram accounts (insight split 65/22/12), averaging +20 followers per account per month.', id: 'Visual Designer: konten untuk 8 akun Instagram (insight 65/22/12), rata-rata +20 pengikut per akun per bulan.' },
+    p5tags: { en: 'Photoshop · Illustrator · Visual Design', id: 'Photoshop · Illustrator · Desain Visual' },
+    p6t: { en: 'Other Projects', id: 'Proyek Lainnya' },
+    p6d: { en: 'IoT-based Smart Door Notification (2025) and Anime Face Recognition (2025).', id: 'Smart Door Notification berbasis IoT (2025) dan Anime Face Recognition (2025).' },
+    secExp: { en: '💼 Experience', id: '💼 Pengalaman' },
+    e1: { en: '<b>Research Intern — JAIST</b> (Jul–Sep 2026): Computer Vision &amp; Reliability Analysis.', id: '<b>Research Intern — JAIST</b> (Jul–Sep 2026): Computer Vision &amp; Reliability Analysis.' },
+    e2: { en: '<b>Visual Designer — Laznas PYI</b> (Feb–Mar 2026).', id: '<b>Visual Designer — Laznas PYI</b> (Feb–Mar 2026).' },
+    e3: { en: '<b>UI/UX &amp; Flutter Developer Intern — Majalengka Tourism and Culture Office</b> (Aug–Oct 2025).', id: '<b>UI/UX &amp; Flutter Developer Intern — Dinas Pariwisata dan Kebudayaan Majalengka</b> (Agu–Okt 2025).' },
+    e4: { en: '<b>Media Division — Glosarium Photography Club, UNIKOM</b> (Dec 2023–Dec 2024): visual content &amp; campus event documentation, engagement +25%.', id: '<b>Divisi Dekomedia — UKM Fotografi Glosarium UNIKOM</b> (Des 2023–Des 2024): konten visual &amp; dokumentasi acara kampus, engagement +25%.' },
+    secSkills: { en: '🛠️ Skills', id: '🛠️ Keahlian' },
+    sk1: { en: 'Programming &amp; Frameworks', id: 'Pemrograman &amp; Framework' },
+    sk3: { en: 'Design', id: 'Desain' },
+    secEdu: { en: '🎓 Education &amp; Certifications', id: '🎓 Pendidikan &amp; Sertifikasi' },
+    ed1: { en: "<b>Bachelor's in Informatics Engineering</b> — Universitas Komputer Indonesia (2022–2026), GPA 3.80.", id: '<b>S1 Teknik Informatika</b> — Universitas Komputer Indonesia (2022–2026), IPK 3,80.' },
+    ed2: { en: '<b>BNSP Data Analyst</b> — LSP Informatika.', id: '<b>BNSP Data Analis</b> — LSP Informatika.' },
+    ed3: { en: '<b>BNSP Junior Graphic Design</b> — LKP DITEKINDO &amp; West Java DISPORA.', id: '<b>BNSP Desain Grafis Muda</b> — LKP DITEKINDO &amp; DISPORA Jawa Barat.' },
+    secContact: { en: '✉️ Contact', id: '✉️ Kontak' },
+    cOpen: { en: 'Open to opportunities in UI/UX, Mobile Development (Flutter), and Visual Design.', id: 'Terbuka untuk peluang UI/UX, Mobile Development (Flutter), dan Desain Visual.' },
+    footer: { en: '© 2026 Rama Hadi Nugraha — Text version of Portfolio Village.', id: '© 2026 Rama Hadi Nugraha — Versi teks dari Desa Portofolio.' },
+  };
+</script>
+<script src="js/langpage.js"></script>
 </body>
 </html>

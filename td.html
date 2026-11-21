@@ -1,53 +1,75 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pertahanan Desa — Tower Defense | Desa Portofolio</title>
-<meta name="description" content="Mini game tower defense di Desa Portofolio Rama Hadi Nugraha.">
+<title>Village Defense — Tower Defense | Portfolio Village</title>
+<meta name="description" content="Tower defense mini game in Rama Hadi Nugraha's Portfolio Village.">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%2357a639'/><rect x='5' y='3' width='6' height='10' fill='%238a5a2b'/></svg>">
 </head>
 <body>
 
 <header class="topbar">
-  <div class="logo">🏰 PERTAHANAN DESA</div>
-  <div class="topbar-sub">Tower Defense — Mini game Desa Portofolio</div>
+  <div class="logo" data-i18n="logo">🏰 VILLAGE DEFENSE</div>
+  <div class="topbar-sub" data-i18n="sub">Tower Defense — Portfolio Village mini game</div>
 </header>
 
 <main>
   <section class="game-page">
     <div class="page-head">
-      <a class="px-btn back" href="index.html">⬅ Kembali ke Desa</a>
-      <span class="page-score">🏆 Rekor: <b id="td-best-label">Wave 0</b></span>
+      <a class="px-btn back" href="index.html" data-i18n="back">⬅ Back to the Village</a>
+      <button class="px-btn" id="pf-lang" type="button">🌐 EN</button>
+      <span class="page-score"><span data-i18n="best">🏆 Best:</span> <b id="td-best-label">Wave 0</b></span>
     </div>
 
     <div class="td-stats-bar">
-      <span>🪙 Emas <b id="td-gold">0</b></span>
-      <span>❤️ Nyawa <b id="td-lives">0</b></span>
-      <span>🌊 Wave <b id="td-wave">0</b></span>
-      <span>👾 Sisa musuh <b id="td-enemies">0</b></span>
+      <span><span data-i18n="gold">🪙 Gold</span> <b id="td-gold">0</b></span>
+      <span><span data-i18n="lives">❤️ Lives</span> <b id="td-lives">0</b></span>
+      <span><span data-i18n="wave">🌊 Wave</span> <b id="td-wave">0</b></span>
+      <span><span data-i18n="enemies">👾 Enemies left</span> <b id="td-enemies">0</b></span>
     </div>
-    <p id="td-msg" class="td-msg">Pilih menara, klik/tap petak rumput untuk membangun. Lalu tekan MULAI WAVE.</p>
+    <p id="td-msg" class="td-msg">Pick a tower, click/tap a grass tile to build. Then press START WAVE.</p>
 
     <div class="canvas-frame">
       <canvas id="td-canvas" width="600" height="400"></canvas>
     </div>
 
     <div class="page-bar">
-      <button id="td-tower-arrow" class="px-btn tower-btn selected">🏹 Menara Panah — 50🪙<small>cepat, damage kecil</small></button>
-      <button id="td-tower-cannon" class="px-btn tower-btn">💣 Menara Meriam — 100🪙<small>lambat, damage area</small></button>
-      <button id="td-start" class="px-btn primary big">MULAI WAVE ▶</button>
+      <button id="td-tower-arrow" class="px-btn tower-btn selected"><span data-i18n="arrow">🏹 Arrow Tower — 50🪙</span><small data-i18n="arrowSub">fast, small damage</small></button>
+      <button id="td-tower-cannon" class="px-btn tower-btn"><span data-i18n="cannon">💣 Cannon Tower — 100🪙</span><small data-i18n="cannonSub">slow, area damage</small></button>
+      <button id="td-start" class="px-btn primary big" data-i18n="start">START WAVE ▶</button>
     </div>
-    <p class="page-help">💡 Tips: letakkan Meriam di dekat tikungan jalan agar ledakannya mengenai banyak slime sekaligus. Slime makin kuat &amp; cepat setiap wave!</p>
+    <p class="page-help" data-i18n="help">💡 Tip: place Cannons near road bends so their blasts hit many slimes at once. Slimes get stronger &amp; faster every wave!</p>
   </section>
 </main>
 
 <footer>
-  <p>© 2026 Rama Hadi Nugraha — Desa Portofolio. Pertahankan desanya! 🏰</p>
+  <p data-i18n="footer">© 2026 Rama Hadi Nugraha — Portfolio Village. Defend the village! 🏰</p>
 </footer>
 
 <script src="js/storage.js"></script>
 <script src="js/td.js"></script>
+<script>
+  window.PAGE_DYNAMIC_LANG = true;
+  window.PAGE_I18N = {
+    logo: { en: '🏰 VILLAGE DEFENSE', id: '🏰 PERTAHANAN DESA' },
+    sub: { en: 'Tower Defense — Portfolio Village mini game', id: 'Tower Defense — Mini game Desa Portofolio' },
+    back: { en: '⬅ Back to the Village', id: '⬅ Kembali ke Desa' },
+    best: { en: '🏆 Best:', id: '🏆 Rekor:' },
+    gold: { en: '🪙 Gold', id: '🪙 Emas' },
+    lives: { en: '❤️ Lives', id: '❤️ Nyawa' },
+    wave: { en: '🌊 Wave', id: '🌊 Wave' },
+    enemies: { en: '👾 Enemies left', id: '👾 Sisa musuh' },
+    arrow: { en: '🏹 Arrow Tower — 50🪙', id: '🏹 Menara Panah — 50🪙' },
+    arrowSub: { en: 'fast, small damage', id: 'cepat, damage kecil' },
+    cannon: { en: '💣 Cannon Tower — 100🪙', id: '💣 Menara Meriam — 100🪙' },
+    cannonSub: { en: 'slow, area damage', id: 'lambat, damage area' },
+    start: { en: 'START WAVE ▶', id: 'MULAI WAVE ▶' },
+    help: { en: '💡 Tip: place Cannons near road bends so their blasts hit many slimes at once. Slimes get stronger &amp; faster every wave!', id: '💡 Tips: letakkan Meriam di dekat tikungan jalan agar ledakannya mengenai banyak slime sekaligus. Slime makin kuat &amp; cepat setiap wave!' },
+    footer: { en: '© 2026 Rama Hadi Nugraha — Portfolio Village. Defend the village! 🏰', id: '© 2026 Rama Hadi Nugraha — Desa Portofolio. Pertahankan desanya! 🏰' },
+  };
+</script>
+<script src="js/langpage.js"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   var KEY = 'desaPortofolioSaveV1';
-  var defaults = { talked: [], fish: 0, collection: {}, fishScore: 0, tdBest: 0, coins: 0, seenTutorial: false, seenStory: false, house: [], music: true };
+  var defaults = { talked: [], fish: 0, collection: {}, fishScore: 0, tdBest: 0, coins: 0, seenTutorial: false, seenStory: false, house: [], music: true, lang: 'en' };
 
   function load() {
     try {

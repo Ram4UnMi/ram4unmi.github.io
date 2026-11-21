@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kolam Pancing — Desa Portofolio</title>
-<meta name="description" content="Mini game mancing di Desa Portofolio Rama Hadi Nugraha.">
+<title>Fishing Pond — Portfolio Village</title>
+<meta name="description" content="Fishing mini game in Rama Hadi Nugraha's Portfolio Village.">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%232f7fd0'/><rect x='3' y='6' width='10' height='5' fill='%23ffd93d'/></svg>">
 </head>
 <body>
 
 <header class="topbar">
-  <div class="logo">🎣 KOLAM PANCING DESA</div>
-  <div class="topbar-sub">Mini game Desa Portofolio — Rama Hadi Nugraha</div>
+  <div class="logo" data-i18n="logo">🎣 VILLAGE FISHING POND</div>
+  <div class="topbar-sub" data-i18n="sub">Portfolio Village mini game — Rama Hadi Nugraha</div>
 </header>
 
 <main>
   <section class="game-page">
     <div class="page-head">
-      <a class="px-btn back" href="index.html">⬅ Kembali ke Desa</a>
-      <span class="page-score">🐟 Total tangkapan: <b id="fish-total">0</b> · ⭐ Poin: <b id="fish-score">0</b></span>
+      <a class="px-btn back" href="index.html" data-i18n="back">⬅ Back to the Village</a>
+      <button class="px-btn" id="pf-lang" type="button">🌐 EN</button>
+      <span class="page-score"><span data-i18n="score1">🐟 Total catch:</span> <b id="fish-total">0</b> · <span data-i18n="score2">⭐ Points:</span> <b id="fish-score">0</b></span>
     </div>
 
     <div class="canvas-frame">
@@ -27,23 +28,39 @@
     </div>
 
     <div class="page-bar">
-      <span id="fishing-status">Tekan LEMPAR untuk mulai memancing. Tunggu tanda "!" lalu tarik secepatnya!</span>
-      <button id="fishing-btn" class="px-btn primary big">LEMPAR 🎣</button>
+      <span id="fishing-status" data-i18n="status">Press CAST to start fishing. Wait for the "!" mark, then reel as fast as you can!</span>
+      <button id="fishing-btn" class="px-btn primary big" data-i18n="btn">CAST 🎣</button>
     </div>
-    <p class="page-help">⌨️ Bisa juga tekan <b>Spasi</b> untuk melempar / menarik. Ikan Koi Emas sangat langka — kesabaran adalah kunci!</p>
+    <p class="page-help" data-i18n="help">⌨️ You can also press <b>Space</b> to cast / reel. The Golden Koi is very rare — patience is the key!</p>
 
     <div class="wood-panel">
-      <h3>🧺 Keranjang Ikan Kamu</h3>
+      <h3 data-i18n="basket">🧺 Your Fish Basket</h3>
       <div id="fishing-collection" class="collection big"></div>
     </div>
   </section>
 </main>
 
 <footer>
-  <p>© 2026 Rama Hadi Nugraha — Desa Portofolio. Selamat memancing! 🎣</p>
+  <p data-i18n="footer">© 2026 Rama Hadi Nugraha — Portfolio Village. Happy fishing! 🎣</p>
 </footer>
 
 <script src="js/storage.js"></script>
 <script src="js/fishing.js"></script>
+<script>
+  window.PAGE_DYNAMIC_LANG = true;
+  window.PAGE_I18N = {
+    logo: { en: '🎣 VILLAGE FISHING POND', id: '🎣 KOLAM PANCING DESA' },
+    sub: { en: 'Portfolio Village mini game — Rama Hadi Nugraha', id: 'Mini game Desa Portofolio — Rama Hadi Nugraha' },
+    back: { en: '⬅ Back to the Village', id: '⬅ Kembali ke Desa' },
+    score1: { en: '🐟 Total catch:', id: '🐟 Total tangkapan:' },
+    score2: { en: '⭐ Points:', id: '⭐ Poin:' },
+    status: { en: 'Press CAST to start fishing. Wait for the "!" mark, then reel as fast as you can!', id: 'Tekan LEMPAR untuk mulai memancing. Tunggu tanda "!" lalu tarik secepatnya!' },
+    btn: { en: 'CAST 🎣', id: 'LEMPAR 🎣' },
+    help: { en: '⌨️ You can also press <b>Space</b> to cast / reel. The Golden Koi is very rare — patience is the key!', id: '⌨️ Bisa juga tekan <b>Spasi</b> untuk melempar / menarik. Ikan Koi Emas sangat langka — kesabaran adalah kunci!' },
+    basket: { en: '🧺 Your Fish Basket', id: '🧺 Keranjang Ikan Kamu' },
+    footer: { en: '© 2026 Rama Hadi Nugraha — Portfolio Village. Happy fishing! 🎣', id: '© 2026 Rama Hadi Nugraha — Desa Portofolio. Selamat memancing! 🎣' },
+  };
+</script>
+<script src="js/langpage.js"></script>
 </body>
 </html>

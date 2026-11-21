@@ -43,6 +43,22 @@
     cannon: { name: 'Meriam', icon: '💣', cost: 100, range: 92, dmg: 26, rate: 1.15, projSpeed: 220, splash: 38, roof: '#3d4b57' },
   };
 
+  /* --- bahasa (mengikuti pilihan di halaman utama) --- */
+  const LANG = (window.DesaSave ? (DesaSave.load().lang || 'en') : 'en');
+  const S = {
+    intro: { en: 'Pick a tower, click/tap a grass tile to build. Then press START WAVE.', id: 'Pilih menara, klik/tap petak rumput untuk membangun. Lalu tekan MULAI WAVE.' },
+    incoming: { en: (w) => 'Wave ' + w + ' incoming! Slimes approach from the west gate...', id: (w) => 'Wave ' + w + ' datang! Slime mendekat dari gerbang barat...' },
+    onPath: { en: 'Cannot build on the road!', id: 'Tidak bisa membangun di jalan!' },
+    blocked: { en: 'There is a tree/rock on that tile.', id: 'Ada pohon/batu di petak itu.' },
+    occupied: { en: 'That tile already has a tower.', id: 'Petak ini sudah ada menara.' },
+    noGold: { en: (n, c) => 'Not enough gold for the ' + n + ' tower (' + c + '🪙).', id: (n, c) => 'Emas tidak cukup untuk menara ' + n + ' (' + c + '🪙).' },
+    built: { en: (n) => n + ' tower built. Defend the village!', id: (n) => 'Menara ' + n + ' dibangun. Pertahankan desa!' },
+    breached: { en: (w) => 'The slimes breached the village at wave ' + w + '! Reload the page to try again.', id: (w) => 'Desa berhasil ditembus slime di wave ' + w + '! Muat ulang halaman untuk mencoba lagi.' },
+    cleared: { en: (w, b) => 'Wave ' + w + ' cleared! Bonus +' + b + '🪙. Build more towers or start the next wave.', id: (w, b) => 'Wave ' + w + ' bersih! Bonus +' + b + '🪙. Bangun menara lagi atau mulai wave berikutnya.' },
+  };
+  function t2(o) { return o[LANG] !== undefined ? o[LANG] : o.en; }
+  function towerName(type) { return LANG === 'en' ? (type === 'arrow' ? 'Arrow' : 'Cannon') : TOWERS[type].name; }
+
   // Jalan tanah: masuk barat di baris 7 -> naik di kolom 11 -> keluar timur di baris 2
   const PATH_CELLS = new Set();
   for (let c = 0; c <= 11; c++) PATH_CELLS.add(c + ',7');
@@ -79,7 +95,7 @@
     gold = 130; lives = 20; wave = 0;
     towers = new Map(); enemies = []; projs = []; particles = [];
     spawning = 0; spawnTimer = 0; waveActive = false; gameOver = false;
-    msgEl.textContent = 'Pilih menara, klik/tap petak rumput untuk membangun. Lalu tekan MULAI WAVE.';
+    msgEl.textContent = t2(S.intro);
     startBtn.disabled = false;
     bestEl.textContent = 'Wave ' + best();
     syncStats();
@@ -106,7 +122,7 @@
     spawning = 6 + wave * 3;
     spawnTimer = 0;
     waveActive = true;
-    msgEl.textContent = 'Wave ' + wave + ' datang! Slime mendekat dari gerbang barat...';
+    msgEl.textContent = t2(S.incoming)(wave);
     syncStats();
     beep(392, 0.1);
   });
@@ -125,14 +141,14 @@
     const cell = cellFromEvent(e);
     if (!cell) return;
     const k = cell.cx + ',' + cell.cy;
-    if (PATH_CELLS.has(k)) { msgEl.textContent = 'Tidak bisa membangun di jalan!'; return; }
-    if (DECOR.has(k)) { msgEl.textContent = 'Ada pohon/batu di petak itu.'; return; }
-    if (towers.has(k)) { msgEl.textContent = 'Petak ini sudah ada menara.'; return; }
+    if (PATH_CELLS.has(k)) { msgEl.textContent = t2(S.onPath); return; }
+    if (DECOR.has(k)) { msgEl.textContent = t2(S.blocked); return; }
+    if (towers.has(k)) { msgEl.textContent = t2(S.occupied); return; }
     const spec = TOWERS[selected];
-    if (gold < spec.cost) { msgEl.textContent = 'Emas tidak cukup untuk menara ' + spec.name + ' (' + spec.cost + '🪙).'; return; }
+    if (gold < spec.cost) { msgEl.textContent = t2(S.noGold)(towerName(selected), spec.cost); return; }
     gold -= spec.cost;
     towers.set(k, { cx: cell.cx, cy: cell.cy, type: selected, cooldown: 0, flash: 0 });
-    msgEl.textContent = 'Menara ' + spec.name + ' dibangun. Pertahankan desa!';
+    msgEl.textContent = t2(S.built)(towerName(selected));
     syncStats();
     beep(660, 0.06);
   });
@@ -181,7 +197,7 @@
           if (lives <= 0) {
             lives = 0; gameOver = true;
             saveBest();
-            msgEl.textContent = 'Desa berhasil ditembus slime di wave ' + wave + '! Muat ulang halaman untuk mencoba lagi.';
+            msgEl.textContent = t2(S.breached)(wave);
             startBtn.disabled = true;
           }
           syncStats();
@@ -254,7 +270,7 @@
         DesaSave.save(d0);
       }
       saveBest();
-      msgEl.textContent = 'Wave ' + wave + ' bersih! Bonus +' + bonus + '🪙. Bangun menara lagi atau mulai wave berikutnya.';
+      msgEl.textContent = t2(S.cleared)(wave, bonus);
       beep(784, 0.1); setTimeout(function () { beep(1046, 0.13); }, 100);
       syncStats();
     }
