@@ -106,6 +106,39 @@
   toggleBtn.textContent = T(UI.gridBtn);
   toggleBtn.addEventListener('click', function () { setGridMode(!gridMode); });
 
+  /* ---------------- Joystick sentuh (HP/tablet) ---------------- */
+  var joyVec = { x: 0, y: 0 };
+  (function initJoystick() {
+    var joy = document.getElementById('joy');
+    var knob = document.getElementById('joy-knob');
+    if (!joy || !knob || !joy.getBoundingClientRect) return;
+    var active = false, pid = null;
+    function setKnob(dx, dy) { knob.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; }
+    function handle(e) {
+      var r = joy.getBoundingClientRect();
+      var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      var dx = e.clientX - cx, dy = e.clientY - cy;
+      var max = r.width / 2 - 8;
+      var d = Math.hypot(dx, dy);
+      if (d > max) { dx *= max / d; dy *= max / d; }
+      setKnob(dx, dy);
+      joyVec.x = dx / max; joyVec.y = dy / max;
+    }
+    joy.addEventListener('pointerdown', function (e) {
+      active = true; pid = e.pointerId;
+      if (joy.setPointerCapture) joy.setPointerCapture(pid);
+      handle(e);
+      if (e.preventDefault) e.preventDefault();
+    });
+    joy.addEventListener('pointermove', function (e) { if (active && e.pointerId === pid) handle(e); });
+    function end(e) {
+      if (e.pointerId !== pid) return;
+      active = false; pid = null; joyVec.x = 0; joyVec.y = 0; setKnob(0, 0);
+    }
+    joy.addEventListener('pointerup', end);
+    joy.addEventListener('pointercancel', end);
+  })();
+
   /* ---------------- Ruangan 3D ---------------- */
   var loadingEl = document.getElementById('room-loading');
   try {
@@ -415,10 +448,16 @@
       if (keys['KeyS'] || keys['ArrowDown']) { mx += sin; mz += cos; }
       if (keys['KeyA'] || keys['ArrowLeft']) { mx += -cos; mz += sin; }
       if (keys['KeyD'] || keys['ArrowRight']) { mx += cos; mz += -sin; }
+      var joyMag = Math.min(1, Math.hypot(joyVec.x, joyVec.y));
+      if (joyMag > 0.08) {
+        mx += (-sin) * (-joyVec.y) + cos * joyVec.x;
+        mz += (-cos) * (-joyVec.y) + (-sin) * joyVec.x;
+      }
       var len = Math.hypot(mx, mz);
       if (len > 0) {
-        pos.x += (mx / len) * sp;
-        pos.z += (mz / len) * sp;
+        var spd = sp * (joyMag > 0.08 ? Math.max(joyMag, 0.35) : 1);
+        pos.x += (mx / len) * spd;
+        pos.z += (mz / len) * spd;
         pos.x = Math.max(-RW / 2 + 0.8, Math.min(RW / 2 - 0.8, pos.x));
         pos.z = Math.max(-RD / 2 + 0.8, Math.min(RD / 2 - 0.8, pos.z));
         // hindari pedestal hologram: dorong keluar dari radiusnya

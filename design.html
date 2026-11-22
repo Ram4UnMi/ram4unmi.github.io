@@ -75,6 +75,21 @@
   .lb-nav .px-btn { background: #232838; color: #eef1ff; }
   .lb-nav .px-btn.primary { background: #ff6b35; color: #14100c; }
   .design-foot { text-align: center; padding: 12px; font-size: 12.5px; color: #77809f; background: #0b0e1a; }
+  /* Joystick sentuh untuk berjalan di HP/tablet — hanya tampil di perangkat sentuh */
+  #joy {
+    display: none; position: absolute; left: 18px; bottom: 52px; z-index: 4;
+    width: 118px; height: 118px; border-radius: 50%;
+    background: rgba(16, 20, 36, .55); border: 2px solid rgba(255, 107, 53, .75);
+    box-shadow: 0 0 18px rgba(255, 107, 53, .35), inset 0 0 22px rgba(0, 0, 0, .5);
+    touch-action: none; user-select: none; -webkit-user-select: none;
+  }
+  #joy-knob {
+    position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px;
+    border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffb59d, #ff6b35 62%, #c33d0e);
+    border: 2px solid rgba(0, 0, 0, .55); box-shadow: 0 4px 10px rgba(0, 0, 0, .5);
+    display: flex; align-items: center; justify-content: center; font-size: 22px; pointer-events: none;
+  }
+  @media (pointer: coarse) { #joy { display: block; } }
 </style>
 </head>
 <body class="design-page">
@@ -94,7 +109,8 @@
     <div class="big">🎮</div>
     <div data-i18n="loading">Preparing your design room…</div>
   </div>
-  <div id="room-hint" data-i18n="hint">🖱️ Drag to look around · WASD to walk · Click a frame to view the work</div>
+  <div id="room-hint" data-i18n="hint">🖱️ Drag to look around · WASD / 🕹️ joystick to walk · Click a frame to view the work</div>
+  <div id="joy" aria-label="Joystick"><div id="joy-knob">🕹️</div></div>
 </div>
 
 <div id="thumbs" aria-label="Works"></div>
@@ -127,7 +143,7 @@
     backVillage: { en: '⬅ 🎮 Dev Portfolio — Village', id: '⬅ 🎮 Portofolio Dev — Desa' },
     textPf: { en: '📄 Text Portfolio', id: '📄 Portofolio Teks' },
     loading: { en: 'Preparing your design room…', id: 'Menyiapkan ruangan desainmu…' },
-    hint: { en: '🖱️ Drag to look around · WASD to walk · Click a frame to view the work', id: '🖱️ Seret untuk melihat sekeliling · WASD untuk berjalan · Klik bingkai untuk melihat karya' },
+    hint: { en: '🖱️ Drag to look around · WASD / 🕹️ joystick to walk · Click a frame to view the work', id: '🖱️ Seret untuk melihat sekeliling · WASD / 🕹️ joystick untuk berjalan · Klik bingkai untuk melihat karya' },
     footer: { en: '© 2026 Rama Hadi Nugraha — Graphic Design Portfolio. Works extracted from the original design portfolio PDF.', id: '© 2026 Rama Hadi Nugraha — Portofolio Desain Grafis. Karya diekstrak dari PDF portofolio desain asli.' },
   };
 </script>
