@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Design Room — Graphic Design Portfolio | Rama Hadi Nugraha</title>
+<meta name="description" content="3D gaming-room gallery of Rama Hadi Nugraha's graphic design works: logofolio, branding, and portfolio slides.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23141824'/><rect x='3' y='3' width='10' height='10' fill='%23ff6b35'/></svg>">
+<style>
+  body.design-page { background: #0b0e1a; color: #eef1ff; min-height: 100vh; display: flex; flex-direction: column; }
+  .design-topbar {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 12px 16px; background: linear-gradient(90deg, #141824, #1b1030 55%, #141824);
+    border-bottom: 3px solid #ff6b35; box-shadow: 0 4px 24px rgba(255,107,53,.25);
+    position: relative; z-index: 5;
+  }
+  .design-topbar .logo { font-weight: 900; font-size: clamp(16px, 3.4vw, 22px); letter-spacing: 1px; }
+  .design-topbar .logo span { color: #ff6b35; }
+  .design-topbar .spacer { flex: 1; }
+  .design-topbar .px-btn { background: #232838; color: #eef1ff; border-color: #000; }
+  .design-topbar .px-btn.primary { background: #ff6b35; color: #14100c; }
+  #room-wrap { position: relative; flex: 1; min-height: 52vh; background: #070912; overflow: hidden; }
+  #room-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+  #room-canvas:active { cursor: grabbing; }
+  #room-loading {
+    position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px;
+    align-items: center; justify-content: center; background: #070912; z-index: 3; text-align: center; padding: 20px;
+  }
+  #room-loading .big { font-size: 40px; animation: roomPulse 1.2s ease-in-out infinite; }
+  @keyframes roomPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+  #room-hint {
+    position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+    background: rgba(10,12,24,.78); border: 2px solid rgba(255,107,53,.65); border-radius: 999px;
+    padding: 6px 14px; font-size: 12.5px; font-weight: 700; white-space: nowrap; z-index: 2; pointer-events: none;
+    max-width: 94vw; overflow: hidden; text-overflow: ellipsis;
+  }
+  #thumbs {
+    display: flex; gap: 8px; overflow-x: auto; padding: 10px 12px; background: #10131f;
+    border-top: 2px solid #232838; scrollbar-width: thin;
+  }
+  #thumbs button {
+    flex: 0 0 auto; width: 92px; height: 62px; border-radius: 8px; overflow: hidden; cursor: pointer;
+    border: 2px solid #2c3247; background: #181c2c; padding: 0; position: relative;
+  }
+  #thumbs button:hover, #thumbs button:focus { border-color: #ff6b35; }
+  #thumbs img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  #thumbs .t-logo img { padding: 6px; box-sizing: border-box; }
+  #grid-view { display: none; padding: 18px 14px 26px; max-width: 1100px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+  #grid-view.open { display: block; }
+  #grid-view h2 { font-size: 19px; margin: 14px 0 10px; color: #ffb59d; }
+  .work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+  .work-card {
+    background: #151927; border: 2px solid #2c3247; border-radius: 12px; overflow: hidden; cursor: pointer;
+    transition: transform .12s ease, border-color .12s ease;
+  }
+  .work-card:hover { transform: translateY(-3px); border-color: #ff6b35; }
+  .work-card .wc-img { height: 140px; display: flex; align-items: center; justify-content: center; background: #0d1020; }
+  .work-card .wc-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .work-card .wc-body { padding: 10px 12px 12px; }
+  .work-card .wc-body b { display: block; font-size: 14.5px; margin-bottom: 4px; }
+  .work-card .wc-body span { font-size: 12.5px; color: #aab3d6; line-height: 1.45; display: block; }
+  #lightbox {
+    position: fixed; inset: 0; background: rgba(4,5,12,.92); z-index: 50;
+    display: none; align-items: center; justify-content: center; padding: 18px; box-sizing: border-box;
+  }
+  #lightbox.open { display: flex; }
+  .lb-card { max-width: 880px; width: 100%; text-align: center; }
+  .lb-card img { max-width: 100%; max-height: 66vh; object-fit: contain; border-radius: 10px; background: #10131f; border: 2px solid #2c3247; }
+  .lb-card img.logo-img { padding: 26px; box-sizing: border-box; }
+  .lb-card h3 { margin: 14px 0 6px; font-size: clamp(18px, 4vw, 24px); }
+  .lb-card p { color: #aab3d6; line-height: 1.55; max-width: 640px; margin: 0 auto; font-size: 14.5px; }
+  .lb-nav { display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+  .lb-nav .count { font-weight: 800; color: #ffb59d; min-width: 64px; }
+  .lb-nav .px-btn { background: #232838; color: #eef1ff; }
+  .lb-nav .px-btn.primary { background: #ff6b35; color: #14100c; }
+  .design-foot { text-align: center; padding: 12px; font-size: 12.5px; color: #77809f; background: #0b0e1a; }
+</style>
+</head>
+<body class="design-page">
+
+<header class="design-topbar">
+  <a class="px-btn" href="index.html" data-i18n="backVillage">⬅ 🎮 Dev Portfolio — Village</a>
+  <div class="logo">🎨 DESIGN <span>ROOM</span></div>
+  <div class="spacer"></div>
+  <button class="px-btn" id="view-toggle" type="button">🖼️ Grid View</button>
+  <a class="px-btn" href="portofolio.html" data-i18n="textPf">📄 Text Portfolio</a>
+  <button class="px-btn" id="pf-lang" type="button">🌐 EN</button>
+</header>
+
+<div id="room-wrap">
+  <canvas id="room-canvas"></canvas>
+  <div id="room-loading">
+    <div class="big">🎮</div>
+    <div data-i18n="loading">Preparing your design room…</div>
+  </div>
+  <div id="room-hint" data-i18n="hint">🖱️ Drag to look around · WASD to walk · Click a frame to view the work</div>
+</div>
+
+<div id="thumbs" aria-label="Works"></div>
+
+<main id="grid-view"></main>
+
+<footer class="design-foot" data-i18n="footer">© 2026 Rama Hadi Nugraha — Graphic Design Portfolio. Works extracted from the original design portfolio PDF.</footer>
+
+<div id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-card">
+    <img id="lb-img" alt="">
+    <h3 id="lb-title"></h3>
+    <p id="lb-desc"></p>
+    <div class="lb-nav">
+      <button class="px-btn" id="lb-prev" type="button">⬅ Prev</button>
+      <span class="count" id="lb-count"></span>
+      <button class="px-btn" id="lb-next" type="button">Next ➡</button>
+      <button class="px-btn primary" id="lb-close" type="button">✖ Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/design-data.js"></script>
+<script src="js/design-room.js"></script>
+<script>
+  window.PAGE_DYNAMIC_LANG = true;
+  window.PAGE_I18N = {
+    backVillage: { en: '⬅ 🎮 Dev Portfolio — Village', id: '⬅ 🎮 Portofolio Dev — Desa' },
+    textPf: { en: '📄 Text Portfolio', id: '📄 Portofolio Teks' },
+    loading: { en: 'Preparing your design room…', id: 'Menyiapkan ruangan desainmu…' },
+    hint: { en: '🖱️ Drag to look around · WASD to walk · Click a frame to view the work', id: '🖱️ Seret untuk melihat sekeliling · WASD untuk berjalan · Klik bingkai untuk melihat karya' },
+    footer: { en: '© 2026 Rama Hadi Nugraha — Graphic Design Portfolio. Works extracted from the original design portfolio PDF.', id: '© 2026 Rama Hadi Nugraha — Portofolio Desain Grafis. Karya diekstrak dari PDF portofolio desain asli.' },
+  };
+</script>
+<script src="js/langpage.js"></script>
+</body>
+</html>

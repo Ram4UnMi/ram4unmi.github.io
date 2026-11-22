@@ -261,6 +261,10 @@
       if (t) b.textContent = L(t);
     });
     set('btn-shop', en ? '🛒 Shop' : '🛒 Toko');
+    set('nav-design', en ? '🎨 Design' : '🎨 Desain');
+    set('choice-label', en ? 'Choose your portfolio:' : 'Pilih portofoliomu:');
+    set('choice-dev', en ? '🎮 Dev Portfolio — Play the Village' : '🎮 Portofolio Dev — Main di Desa');
+    set('choice-design', en ? '🎨 Graphic Design — 3D Room' : '🎨 Desain Grafis — Ruangan 3D');
     set('nav-fish', en ? '🎣 Fishing' : '🎣 Mancing');
     set('nav-td', '🏰 Defense');
     set('nav-teks', en ? '📄 Portfolio' : '📄 Portofolio');

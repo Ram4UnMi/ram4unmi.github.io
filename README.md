@@ -6,6 +6,8 @@ Website portofolio berbentuk **game petualangan pixel 2D ala Stardew Valley** �
 
 ## Fitur
 
+- **Dua portofolio, dua dunia** 🎮🎨: halaman pertama tetap **Desa Portofolio** (portofolio dev, game pixel 2D). Di **popup pertama** dan di **navbar** kini ada pilihan jelas: *Dev Portfolio — Play the Village* atau *Graphic Design — 3D Room*. Halaman teks juga punya tautan ke ruangan desain.
+- **Design Room 3D — ruangan gaming untuk portofolio desain grafis** 🎨: halaman `design.html` berisi ruangan 3D gelap bergaya gaming (Three.js disimpan lokal di `js/three.min.js`, tetap jalan dari `file://`): strip LED RGB yang berganti warna, papan neon "DESIGN ROOM / LOGOFOLIO / MY WORK", setup meja gaming (PC RGB + kursi gaming), hologram logo berputar di tengah ruangan, dan partikel debu melayang. Karya dari PDF portofolio desain ditampilkan sebagai bingkai bercahaya di dinding: **5 logo transparan hasil ekstrak asli dari PDF** (Asmara Loka, INEI, CV. Teknika Las Jaya Makmur, Cookie Crunchsr, Mandar Coffee) di dinding Logofolio, plus **10 slide portofolio** (sampul, tentang, keahlian, pendidikan, pengalaman, posisi, volunteer, logofolio, kontak, terima kasih) di dinding lain. Kontrol: seret untuk melihat sekeliling, WASD/panah untuk berjalan, **klik bingkai** untuk melihat karya besar (lightbox dengan navigasi sebelum/berikutnya). Ada strip thumbnail di bawah, tombol **Grid View** sebagai alternatif, dan fallback otomatis ke grid bila WebGL tidak tersedia. Gambar karya tertanam sebagai data URI di `js/design-data.js` agar tekstur WebGL tetap berfungsi dari `file://`.
 - **Dua bahasa (English utama / Bahasa Indonesia)** 🌐: seluruh situs — navbar, popup, dialog warga, toko, panel info, halaman teks, dan kedua mini game — tersedia dalam Bahasa Inggris (default) dan Bahasa Indonesia. Ganti bahasa lewat tombol **🌐 di navbar** atau tombol **English / Indonesia di popup pertama**; pilihan tersimpan dan berlaku di semua halaman. Papan nama rumah pun ikut berganti (VILLAGE HALL, BLACKSMITH, GUEST HOUSE, dst.).
 - **Rumah 4 gaya arsitektur dunia**: setiap bangunan kini bergaya khas — **Medieval Eropa** (Balai Desa & Kantor Pos: batu + rangka kayu, atap curam, panji), **Timur Tengah** (Pandai Besi: batu pasir, kubah tembaga, pintu lengkung, kanopi bergaris), **Asia Timur** (Arena & Penginapan: atap melengkung berujung terangkat, pilar merah, lentera kertas), dan **Asia Tenggara** (Galeri & Rumah Tamu: rumah panggung kayu, atap jerami tinggi, gabel ukiran, tangga depan).
 - **Rumah Tamu & Toko Dekorasi** 🛒: ada rumah khusus untukmu di tenggara desa (rumah panggung Asia Tenggara). Kumpulkan koin lalu belanja 6 perabotan untuk mempercantiknya: Cat Rumah Baru (40🪙), Atap Terakota Premium (60🪙), Taman Bunga (30🪙), Lentera Teras (25🪙), Pagar Kayu (35🪙), dan Air Mancur Mini beranimasi (80🪙). Semua perubahan langsung terlihat di desa dan tersimpan permanen. Buka toko lewat tombol 🛒 di navbar atau dengan menekan E di depan Rumah Tamu.
@@ -58,6 +60,7 @@ Struktur file:
 portofolio-game/
 ├── index.html        # Desa pixel fullscreen + navbar + tutorial
 ├── portofolio.html   # Versi teks modern (untuk rekruter)
+├── design.html       # Design Room 3D — portofolio desain grafis
 ├── fishing.html      # Halaman mini game mancing
 ├── td.html           # Halaman mini game tower defense
 ├── css/style.css     # Gaya semua halaman
@@ -66,5 +69,9 @@ portofolio-game/
 ├── js/game2d.js      # Engine desa pixel 2D (Canvas, tanpa library)
 ├── js/fishing.js     # Mini game mancing
 ├── js/td.js          # Mini game tower defense
+├── js/langpage.js    # Penerapan bahasa di halaman pendamping
+├── js/three.min.js   # Three.js r128 lokal (MIT) — khusus Design Room
+├── js/design-data.js # Karya desain (data URI, ekstrak dari PDF portofolio)
+├── js/design-room.js # Engine ruangan 3D + lightbox + grid
 └── README.md
 ```

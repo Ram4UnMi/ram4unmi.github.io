@@ -456,3 +456,13 @@ body.game-full #touch-controls {
   #dialog-face { width: 44px; height: 44px; }
   .hud-item { font-size: 12.5px; }
 }
+
+/* ===== Pilihan portofolio di popup pertama (Desa vs Desain 3D) ===== */
+.choice-row { margin-top: 14px; border-top: 2px dashed rgba(127,127,160,.45); padding-top: 12px; }
+.choice-row > span { display: block; font-weight: 800; font-size: 13.5px; margin-bottom: 8px; opacity: .85; }
+.choice-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice-btns .px-btn.choice {
+  flex: 1 1 200px; text-align: center; text-decoration: none; display: inline-block;
+  padding: 10px 12px; font-size: 14px;
+}
+.choice-btns .px-btn.choice.design { background: #ff6b35; color: #17110b; border-color: #7a2d10; }
